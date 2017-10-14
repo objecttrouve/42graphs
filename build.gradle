@@ -1,0 +1,121 @@
+/*
+ * Released under the terms of the MIT License.
+ *
+ * Copyright (c) 2017 objecttrouve.org <un.object.trouve@gmail.com>
+ *
+ */
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "me.champeau.gradle:jmh-gradle-plugin:0.4.3"
+        classpath 'net.researchgate:gradle-release:2.6.0'
+    }
+}
+
+
+
+apply plugin: 'java-library'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'net.researchgate.release'
+
+
+
+
+repositories {
+    mavenCentral()
+}
+
+group='org.objecttrouve'
+sourceCompatibility=JavaVersion.VERSION_1_9;
+archivesBaseName = "42graphs"
+
+
+dependencies {
+
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+
+    jmh group: 'junit', name: 'junit', version: '4.12'
+
+}
+
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar, javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+test {
+    systemProperties System.getProperties()
+}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name '42 Graphs'
+                packaging 'jar'
+                description 'Convenient Hamcrest Matcher derivations'
+                url 'https://github.com/objecttrouve/42graphs'
+
+                scm {
+                    url 'https://github.com/objecttrouve/42graphs'
+                    connection 'scm:https://github.com/objecttrouve/42graphs.git'
+                    developerConnection 'scm:git://github.com/objecttrouve/42graphs.git'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'objecttrouve'
+                        name "L'objet trouvé"
+                        email 'un.object.trouve@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+release {
+    scmAdapters = [
+            net.researchgate.release.GitAdapter
+    ]
+}
+
+afterReleaseBuild.dependsOn uploadArchives

@@ -1,0 +1,6 @@
+.idea/**
+.gradle/**/build
+build/
+.gradle/
+sandbox.iml
+42graphs.iml
