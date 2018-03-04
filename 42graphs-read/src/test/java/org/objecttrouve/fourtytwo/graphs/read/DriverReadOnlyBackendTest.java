@@ -35,11 +35,9 @@ import org.objecttrouce.fourtytwo.graphs.aggregations.api.ValueWithPosition;
 import org.objecttrouve.fourtytwo.graphs.api.*;
 import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -58,6 +56,8 @@ import static org.objecttrouve.fourtytwo.graphs.mocks.StringValue.str;
 import static org.objecttrouve.fourtytwo.graphs.mocks.TestIntegerSequenceTree.anIntegerSequence;
 import static org.objecttrouve.fourtytwo.graphs.mocks.TestStringSequenceTree.aStringSequence;
 import static org.objecttrouve.fourtytwo.graphs.read.ValueWithPositionMatcher.aVwp;
+import static org.objecttrouve.fourtytwo.graphs.tx.Tx.done;
+import static org.objecttrouve.fourtytwo.graphs.tx.Tx.inTx;
 
 public class DriverReadOnlyBackendTest {
     private static final String localhost_7687 = "localhost:7687";
@@ -70,8 +70,6 @@ public class DriverReadOnlyBackendTest {
 
     @BeforeClass
     public static void init() throws IOException {
-
-
         final org.neo4j.kernel.configuration.BoltConnector bolt = new org.neo4j.kernel.configuration.BoltConnector();
         final File storeDir = tmpFolder.newFolder();
         db = new GraphDatabaseFactory()//
@@ -120,7 +118,7 @@ public class DriverReadOnlyBackendTest {
 
     @Test
     public void countNodes__1_matching_node() throws InterruptedException {
-        inTx(() -> db.createNode(label("Token")));
+        inTx(db, () -> db.createNode(label("Token")));
         final Dimension tokens = dim().withName("Token").mock();
 
         final long count = rob.countNodes(tokens);
@@ -130,7 +128,7 @@ public class DriverReadOnlyBackendTest {
 
     @Test
     public void countNodes__1_non_matching_node() throws InterruptedException {
-        inTx(() -> db.createNode(label("Quark")));
+        inTx(db, () -> db.createNode(label("Quark")));
         final Dimension tokens = dim().withName("Token").mock();
 
         final long count = rob.countNodes(tokens);
@@ -140,7 +138,7 @@ public class DriverReadOnlyBackendTest {
 
     @Test
     public void countNodes__1_null_Dimension_arg() throws InterruptedException {
-        inTx(() -> db.createNode(label("Quark")));
+        inTx(db, () -> db.createNode(label("Quark")));
 
         final long count = rob.countNodes(null);
 
@@ -149,9 +147,9 @@ public class DriverReadOnlyBackendTest {
 
     @Test
     public void countNodes__multiple_matching_nodes() throws InterruptedException {
-        inTx(() -> db.createNode(label("Token")));
-        inTx(() -> db.createNode(label("Token")));
-        inTx(() -> db.createNode(label("Token")));
+        inTx(db, () -> db.createNode(label("Token")));
+        inTx(db, () -> db.createNode(label("Token")));
+        inTx(db, () -> db.createNode(label("Token")));
         final Dimension tokens = dim().withName("Token").mock();
 
         final long count = rob.countNodes(tokens);
@@ -161,11 +159,11 @@ public class DriverReadOnlyBackendTest {
 
     @Test
     public void countNodes__multiple_matching_nodes_and_distractors() throws InterruptedException {
-        inTx(() -> db.createNode(label("Token")));
-        inTx(() -> db.createNode(label("Token")));
-        inTx(() -> db.createNode(label("Pescado")));
-        inTx(() -> db.createNode(label("La Barbe")));
-        inTx(() -> db.createNode(label("Token")));
+        inTx(db, () -> db.createNode(label("Token")));
+        inTx(db, () -> db.createNode(label("Token")));
+        inTx(db, () -> db.createNode(label("Pescado")));
+        inTx(db, () -> db.createNode(label("La Barbe")));
+        inTx(db, () -> db.createNode(label("Token")));
         final Dimension tokens = dim().withName("Token").mock();
 
         final long count = rob.countNodes(tokens);
@@ -176,11 +174,11 @@ public class DriverReadOnlyBackendTest {
 
     @Test
     public void countNodes__multiple_matching_nodes_and_distractors_and_multiple_labels_per_node() throws InterruptedException {
-        inTx(() -> db.createNode(label("Token"), label("Elphi")));
-        inTx(() -> db.createNode(label("Token")));
-        inTx(() -> db.createNode(label("Pescado"), label("Merci")));
-        inTx(() -> db.createNode(label("La Barbe")));
-        inTx(() -> db.createNode(label("Teenie"), label("Token"), label("Token")));
+        inTx(db, () -> db.createNode(label("Token"), label("Elphi")));
+        inTx(db, () -> db.createNode(label("Token")));
+        inTx(db, () -> db.createNode(label("Pescado"), label("Merci")));
+        inTx(db, () -> db.createNode(label("La Barbe")));
+        inTx(db, () -> db.createNode(label("Teenie"), label("Token"), label("Token")));
         final Dimension tokens = dim().withName("Token").mock();
 
         final long count = rob.countNodes(tokens);
@@ -190,11 +188,11 @@ public class DriverReadOnlyBackendTest {
 
     @Test
     public void countNodes__no_matching_nodes() throws InterruptedException {
-        inTx(() -> db.createNode(label("Token1"), label("Elphi")));
-        inTx(() -> db.createNode(label("Token2")));
-        inTx(() -> db.createNode(label("Pescado"), label("Merci")));
-        inTx(() -> db.createNode(label("La Barbe")));
-        inTx(() -> db.createNode(label("Teenie"), label("Token3"), label("Token4")));
+        inTx(db, () -> db.createNode(label("Token1"), label("Elphi")));
+        inTx(db, () -> db.createNode(label("Token2")));
+        inTx(db, () -> db.createNode(label("Pescado"), label("Merci")));
+        inTx(db, () -> db.createNode(label("La Barbe")));
+        inTx(db, () -> db.createNode(label("Teenie"), label("Token3"), label("Token4")));
         final Dimension tokens = dim().withName("Token5").mock();
 
         final long count = rob.countNodes(tokens);
@@ -1869,22 +1867,9 @@ public class DriverReadOnlyBackendTest {
     }
 
 
-    @SuppressWarnings("UnusedReturnValue")
-    private static <T> T inTx(final Supplier<T> action) {
-
-        final Transaction tx = db.beginTx();
-        final T result = action.get();
-        done(tx);
-        return result;
-    }
 
     private static DriverReadOnlyBackend readOnlyBackend() {
         return new DriverReadOnlyBackend(GraphDatabase.driver("bolt://" + localhost_7687), newAggregator());
-    }
-
-    private static void done(final Transaction tx) {
-        tx.success();
-        tx.close();
     }
 
 }

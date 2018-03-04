@@ -28,20 +28,20 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.logging.Log;
 import org.neo4j.procedure.Context;
+import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
 import org.objecttrouve.fourtytwo.graphs.api.Dimension;
 import org.objecttrouve.fourtytwo.graphs.pojo.DimensionPojo;
 
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static java.util.stream.Stream.empty;
 import static org.neo4j.procedure.Mode.READ;
 
 public class QuantityProcedures {
 
-    public static final String procCountAllValues = "count.all.values";
+    static final String procCountAllValues = "count.all.values";
 
     private enum Query {
         countAllValues("MATCH (n:%s) RETURN count(n)") //
@@ -52,9 +52,9 @@ public class QuantityProcedures {
             this.template = template;
         }
 
-        String str(final String... snippets){
+        String str(final String... snippets) {
             //noinspection ConfusingArgumentToVarargsMethod
-            return String.format(template,  snippets);
+            return String.format(template, snippets);
         }
 
 
@@ -63,20 +63,22 @@ public class QuantityProcedures {
     @SuppressWarnings("WeakerAccess")
     @Context
     public GraphDatabaseService db;
-
     @SuppressWarnings("WeakerAccess")
     @Context
     public Log log;
 
-    @Procedure( name = procCountAllValues, mode = READ )
-    public Stream<LongQuantityRecord> countAllValues(@Name("dimension") final String dimensionName)
-    {
+    @SuppressWarnings("unused")
+    @Procedure(name = procCountAllValues, mode = READ)
+    @Description("Counts the value nodes in the given dimension.")
+    public Stream<LongQuantityRecord> countAllValues(@Name("dimension") final String dimensionName) {
         if (dimensionName == null) {
             return empty();
         }
         final Dimension dimension = DimensionPojo.toDimension(dimensionName);
-        final Result result = db.execute(Query.countAllValues.str(dimension.getName()));
-        if (!result.hasNext()){
+        final String query = Query.countAllValues.str(dimension.getName());
+        log.debug("Executing query '%s'...", query);
+        final Result result = db.execute(query);
+        if (!result.hasNext()) {
             return empty();
         }
         return Stream.of(new LongQuantityRecord((long) result.next()//

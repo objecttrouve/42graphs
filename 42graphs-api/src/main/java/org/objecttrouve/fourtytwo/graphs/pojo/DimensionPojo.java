@@ -40,6 +40,6 @@ public class DimensionPojo implements Dimension {
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 }

@@ -22,28 +22,26 @@
  * SOFTWARE.
  */
 
-package org.objecttrouve.fourtytwo.graphs.procedures.quantities;
+package org.objecttrouve.fourtytwo.graphs.tx;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Value;
+import java.util.function.Supplier;
 
-import static java.util.Optional.ofNullable;
+public class Tx {
+    @SuppressWarnings("UnusedReturnValue")
+    public static <T> T inTx(final GraphDatabaseService db, final Supplier<T> action) {
 
-@SuppressWarnings("WeakerAccess")
-public class LongQuantityRecord {
-
-    public static LongQuantityRecord fromNeoRecord(final Record neoRecord){
-        return new LongQuantityRecord(ofNullable(neoRecord).map (nr -> nr.get("quantity")).map(Value::asLong).orElse(0L));
+        final Transaction tx = db.beginTx();
+        final T result = action.get();
+        done(tx);
+        return result;
     }
 
-    public long quantity;
-
-    public LongQuantityRecord(final long quantity) {
-        this.quantity = quantity;
+    public static void done(final Transaction tx) {
+        tx.success();
+        tx.close();
     }
 
-    public long getQuantity() {
-        return quantity;
-    }
 }
