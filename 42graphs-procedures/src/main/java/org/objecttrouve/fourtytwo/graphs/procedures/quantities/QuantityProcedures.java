@@ -24,6 +24,7 @@
 
 package org.objecttrouve.fourtytwo.graphs.procedures.quantities;
 
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.logging.Log;
@@ -32,12 +33,13 @@ import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
 import org.objecttrouve.fourtytwo.graphs.api.Dimension;
-import org.objecttrouve.fourtytwo.graphs.pojo.DimensionPojo;
 
+import javax.annotation.Nonnull;
 import java.util.stream.Stream;
 
 import static java.util.stream.Stream.empty;
 import static org.neo4j.procedure.Mode.READ;
+import static org.objecttrouve.fourtytwo.graphs.pojo.DimensionPojo.toDimension;
 
 public class QuantityProcedures {
 
@@ -70,20 +72,23 @@ public class QuantityProcedures {
     @SuppressWarnings("unused")
     @Procedure(name = procCountAllValues, mode = READ)
     @Description("Counts the value nodes in the given dimension.")
-    public Stream<LongQuantityRecord> countAllValues(@Name("dimension") final String dimensionName) {
-        if (dimensionName == null) {
+    public Stream<LongQuantityRecord> countAllValues(@Name("dimension") @Nonnull final String dimensionName) {
+        if (StringUtils.isBlank(dimensionName)) {
+            log.warn("Procedure '%s' called with null or empty 'dimension' parameter. Won't work.", procCountAllValues);
             return empty();
         }
-        final Dimension dimension = DimensionPojo.toDimension(dimensionName);
+        final Dimension dimension = toDimension(dimensionName);
         final String query = Query.countAllValues.str(dimension.getName());
         log.debug("Executing query '%s'...", query);
         final Result result = db.execute(query);
         if (!result.hasNext()) {
             return empty();
         }
-        return Stream.of(new LongQuantityRecord((long) result.next()//
-            .getOrDefault("count(n)", 0L)));
-
+        return Stream.of(//
+            new LongQuantityRecord(//
+                (long) result.next()//
+                    .getOrDefault("count(n)", 0L)//
+            ));
     }
 
 }

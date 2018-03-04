@@ -89,6 +89,67 @@ public class QuantitiesProceduresTest {
         assertThat(quantity(result), is(1L));
     }
 
+    @Test
+    public void countAllValues__three_relevant_nodes() throws Throwable {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("One", "two", "three") //
+            ) //
+            .commit();
+
+        final StatementResult result = callCountAllValues("Token");
+
+        assertThat(quantity(result), is(3L));
+    }
+
+    @Test
+    public void countAllValues__three_relevant_nodes__and_three_distractors() throws Throwable {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("One", "two", "three") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Num") //
+                    .withLeaves("1", "2", "3") //
+            ) //
+            .commit();
+
+        final StatementResult result = callCountAllValues("Token");
+
+        assertThat(quantity(result), is(3L));
+    }
+
+    @Test
+    public void countAllValues__no_relevant_nodes() throws Throwable {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Num") //
+                    .withLeaves("1", "2", "3") //
+            ) //
+            .commit();
+
+        final StatementResult result = callCountAllValues("Token");
+
+        assertThat(quantity(result), is(0L));
+    }
+
 
     private StatementResult callCountAllValues(final String dimension) {
         return driver.session()//
@@ -100,6 +161,7 @@ public class QuantitiesProceduresTest {
 
     private Long quantity(final StatementResult result) {
         return ofNullable(result)//
+            .filter(StatementResult::hasNext)//
             .map(StatementResult::next)//
             .map(LongQuantityRecord::fromNeoRecord)//
             .map(LongQuantityRecord::getQuantity)//
