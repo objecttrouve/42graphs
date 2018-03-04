@@ -22,9 +22,41 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.pojo;
+
+import org.objecttrouve.fourtytwo.graphs.api.Value;
+
+public class ValuePojo<T> implements Value<T> {
+    private final T identifier;
+
+    public ValuePojo(final T identifier) {
+        this.identifier = identifier;
+    }
+
+    @Override
+    public T getIdentifier() {
+        return null;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final ValuePojo<?> valuePojo = (ValuePojo<?>) o;
+
+        return identifier != null ? identifier.equals(valuePojo.identifier) : valuePojo.identifier == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return identifier != null ? identifier.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "ValuePojo{" +
+            "identifier=" + identifier +
+            '}';
+    }
+}

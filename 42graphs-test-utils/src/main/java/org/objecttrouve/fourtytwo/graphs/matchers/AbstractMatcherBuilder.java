@@ -22,9 +22,43 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.matchers;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
+
+public abstract class AbstractMatcherBuilder<M> implements Matcher<M> {
+
+    protected final FluentAttributeMatcher<M> matcher;
+
+    protected AbstractMatcherBuilder(final FluentAttributeMatcher<M> matcher) {
+        this.matcher = matcher;
+    }
+
+
+
+    @Override
+    public boolean matches(final Object item) {
+        return matcher.matches(item);
+    }
+
+    @Override
+    public void describeMismatch(final Object item, final Description mismatchDescription) {
+        matcher.describeMismatch(item, mismatchDescription);
+    }
+
+    @Override
+    public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
+        throw new UnsupportedOperationException("Don't call this!");
+    }
+
+    @Override
+    public void describeTo(final Description description) {
+        matcher.describeTo(description);
+    }
+
+
+
+
+}

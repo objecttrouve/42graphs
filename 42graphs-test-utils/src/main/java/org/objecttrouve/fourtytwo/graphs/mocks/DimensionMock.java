@@ -22,9 +22,31 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.mocks;
+
+import org.mockito.Mockito;
+import org.objecttrouve.fourtytwo.graphs.api.Dimension;
+
+import static org.mockito.Mockito.when;
+
+public class DimensionMock {
+
+    private final Dimension mock;
+
+    private DimensionMock(final Dimension mock) {
+        this.mock = mock;
+    }
+
+    public DimensionMock withName(final String name){
+        when(mock.getName()).thenReturn(name);
+        return this;
+    }
+
+    public Dimension mock(){
+        return mock;
+    }
+
+    public static DimensionMock dim(){
+        return new DimensionMock(Mockito.mock(Dimension.class, Mockito.RETURNS_DEEP_STUBS));
+    }
+}

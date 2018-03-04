@@ -22,9 +22,24 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.pojo;
+
+import org.objecttrouve.fourtytwo.graphs.api.Dimension;
+
+public class DimensionPojo implements Dimension {
+
+    private final String name;
+
+    public static Dimension toDimension(final String name){
+        return new DimensionPojo(name);
+    }
+
+    private DimensionPojo(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+}

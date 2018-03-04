@@ -22,9 +22,30 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.matchers;
+
+import org.neo4j.driver.v1.types.Node;
+import org.objecttrouve.testing.matchers.ConvenientMatchers;
+import org.objecttrouve.testing.matchers.fluentatts.Attribute;
+import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
+
+import static org.objecttrouve.fourtytwo.graphs.api.Value.idKey;
+
+public class NeoNode2Matcher extends AbstractMatcherBuilder<org.neo4j.driver.v1.types.Node> {
+
+    private static final Attribute<Node, String> idVal = Attribute.attribute("identifier", n -> n.get(idKey).asString());
+
+    public static NeoNode2Matcher aNode() {
+        final FluentAttributeMatcher<Node> m = ConvenientMatchers.a(Node.class);
+        return new NeoNode2Matcher(m);
+    }
+
+    private NeoNode2Matcher(final FluentAttributeMatcher<Node> matcher) {
+        super(matcher);
+    }
+
+    public NeoNode2Matcher withId(final String id) {
+        super.matcher.with(idVal, id);
+        return this;
+    }
+}

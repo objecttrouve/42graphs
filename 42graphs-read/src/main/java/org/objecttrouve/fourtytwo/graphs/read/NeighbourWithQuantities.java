@@ -22,9 +22,43 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.read;
+
+import com.google.common.collect.ImmutableMap;
+import org.objecttrouve.fourtytwo.graphs.api.*;
+
+import java.util.Map;
+import java.util.Set;
+
+class NeighbourWithQuantities<T> implements AggregatedNeighbour<T> {
+
+    private  final Value<T> self;
+    private  final Value<T> neighbour;
+    private  final Map<QuantityMetric, Number> metrics;
+
+    NeighbourWithQuantities(final Value<T> self, final Value<T> neighbour, final Map<QuantityMetric, Number> metrics) {
+        this.self = self;
+        this.neighbour = neighbour;
+        this.metrics = ImmutableMap.copyOf(metrics);
+    }
+
+    @Override
+    public Value<T> getSelf() {
+        return self;
+    }
+
+    @Override
+    public Value<T> getNeighbour() {
+        return neighbour;
+    }
+
+    @Override
+    public Set<QuantityMetric> getAvailableQuantities() {
+        return metrics.keySet();
+    }
+
+    @Override
+    public Map<QuantityMetric, Number> getQuantities() {
+        return metrics;
+    }
+}

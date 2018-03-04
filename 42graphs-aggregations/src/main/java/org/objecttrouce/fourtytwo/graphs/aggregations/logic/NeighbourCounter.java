@@ -22,9 +22,30 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouce.fourtytwo.graphs.aggregations.logic;
+
+import org.objecttrouce.fourtytwo.graphs.aggregations.api.NeighbourWithCount;
+import org.objecttrouve.fourtytwo.graphs.api.Value;
+
+class NeighbourCounter<T> {
+
+    private final Value<T> self;
+    private final Value<T> neighbour;
+    private final int vicinity;
+    private long count;
+
+    NeighbourCounter(final Value<T> self, final Value<T> neighbour, final int vicinity) {
+        this.self = self;
+        this.neighbour = neighbour;
+        this.vicinity = vicinity;
+
+    }
+
+    void count(){
+        count++;
+    }
+
+    NeighbourWithCount<T> build(){
+        return new CountedNeighbour(self, neighbour, vicinity, count);
+    }
+}

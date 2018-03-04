@@ -22,9 +22,44 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.backend.init;
+
+public class NodeKey<V> {
+  private final V id;
+  private final String dimension;
+
+  public static <V>  NodeKey key(final V id, final String dimension){
+    return new NodeKey(id, dimension);
+  }
+
+  public NodeKey(final V id, final String dimension) {
+    this.id = id;
+    this.dimension = dimension;
+  }
+
+  public V getId() {
+    return id;
+  }
+
+  public String getDimension() {
+    return dimension;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    final NodeKey<?> nodeKey = (NodeKey<?>) o;
+
+    if (id != null ? !id.equals(nodeKey.id) : nodeKey.id != null) return false;
+    return dimension != null ? dimension.equals(nodeKey.dimension) : nodeKey.dimension == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (dimension != null ? dimension.hashCode() : 0);
+    return result;
+  }
+}

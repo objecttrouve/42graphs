@@ -1,0 +1,76 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018 objecttrouve.org <un.object.trouve@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://m2.neo4j.org/content/repositories/releases/'
+    }
+
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+
+archivesBaseName = "42graphs-procedures"
+
+
+
+dependencies {
+
+    api project(':42graphs-api')
+    implementation group: 'org.neo4j', name: 'neo4j', version: '3.4.0-alpha04'
+    implementation 'org.neo4j.driver:neo4j-java-driver:1.5.0'
+    implementation group: 'com.google.guava', name: 'guava', version: '23.6-jre'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta0'
+
+    testImplementation project(':42graphs-fill')
+    testImplementation project(':42graphs-test-utils')
+   // testImplementation group: 'junit', name: 'junit', version: '4.12'
+//    testImplementation 'org.objecttrouve:convenience-matchers:0.2.0'
+    //testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
+
+
+
+}
+
+ext.moduleName = 'org.objecttrouve.fourtytwo.graphs.enhance'
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes('Automatic-Module-Name': moduleName)
+    }
+}
+
+tasks.build.dependsOn(shadowJar)

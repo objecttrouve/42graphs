@@ -22,9 +22,28 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.mocks;
+
+import org.mockito.Mockito;
+import org.objecttrouve.fourtytwo.graphs.api.Graph;
+import org.objecttrouve.fourtytwo.graphs.api.GraphWriter;
+
+public class BackendMock {
+
+    private final Graph db = Mockito.mock(Graph.class);
+
+    public static BackendMock ofBackend(){
+        return new BackendMock();
+    }
+
+    public Graph getMock(){
+        return db;
+    }
+
+    public BackendMock writing(final WritingMock writingMock){
+        final GraphWriter mock = writingMock.getMock();
+        Mockito.when(db.writer(false)).thenReturn(mock);
+        return this;
+    }
+
+}

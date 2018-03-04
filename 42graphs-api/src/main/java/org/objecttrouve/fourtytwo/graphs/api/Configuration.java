@@ -1,3 +1,4 @@
+
 /*
  * MIT License
  *
@@ -22,9 +23,23 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.api;
+
+
+
+import java.net.URI;
+
+public interface Configuration {
+
+    interface BackendConnection {
+        URI uri();
+        BackendCredentials credentials();
+    }
+
+    interface BackendCredentials {
+        String user();
+        String password();
+    }
+
+    BackendConnection connection();
+}

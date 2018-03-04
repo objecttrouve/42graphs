@@ -22,9 +22,25 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.read;
+
+import org.objecttrouce.fourtytwo.graphs.aggregations.api.ValueWithPosition;
+import org.objecttrouve.fourtytwo.graphs.api.Value;
+
+class NodeWithPosition<T> implements ValueWithPosition<T> {
+    private final T value;
+    private final int position;
+
+    NodeWithPosition(final T value, final int position) {
+        this.value = value;
+        this.position = position;
+    }
+
+    public Value<T> getValue() {
+        return () -> value;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+}

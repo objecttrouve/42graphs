@@ -22,9 +22,23 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.mocks;
+
+import org.objecttrouve.fourtytwo.graphs.api.Value;
+
+public class StringValue implements Value<String> {
+    private final String id;
+
+    public static StringValue str(final String id){
+        return new StringValue(id);
+    }
+
+    private StringValue(final String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return id;
+    }
+}

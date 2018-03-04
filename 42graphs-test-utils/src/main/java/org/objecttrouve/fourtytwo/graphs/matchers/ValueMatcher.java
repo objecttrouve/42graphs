@@ -22,9 +22,28 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.matchers;
+
+import org.objecttrouve.fourtytwo.graphs.api.Value;
+import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
+
+import static org.objecttrouve.testing.matchers.ConvenientMatchers.a;
+import static org.objecttrouve.testing.matchers.fluentatts.Attribute.attribute;
+
+public class ValueMatcher<T> extends AbstractMatcherBuilder<Value<T>> {
+
+    public static <T> ValueMatcher aValueAs(final Class<T> tClass) {
+        //noinspection unchecked
+        return new ValueMatcher(a(Value.class), tClass);
+    }
+
+    private ValueMatcher(final FluentAttributeMatcher<Value<T>> matcher, final Class<T> tClass) {
+        super(matcher);
+        this.matcher.with(attribute("class", v -> v.getIdentifier().getClass()), tClass);
+    }
+
+    public ValueMatcher withIdentifier(final T identifyingValue) {
+        super.matcher.with(attribute("identifier", Value::getIdentifier), identifyingValue);
+        return this;
+    }
+}

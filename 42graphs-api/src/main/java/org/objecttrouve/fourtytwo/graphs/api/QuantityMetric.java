@@ -22,9 +22,26 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.api;
+
+import java.util.Map;
+
+public interface QuantityMetric {
+
+    Class<? extends Number> getType();
+
+    default <N extends Number> N get(final Map<QuantityMetric, Number> map, final Class<N> klass) {
+        if (klass == null){
+            throw new IllegalArgumentException("Class arg must not be null!");
+        }
+        if (!klass.isAssignableFrom(getType())) {
+            throw new IllegalArgumentException(ValueQuantityMetric.class.getSimpleName() + " has type " + getType().getSimpleName() + ". Can't have " + klass.getSimpleName());
+        }
+        //noinspection SuspiciousMethodCalls
+        final Number number = map.get(this);
+        if (number != null) {
+            return klass.cast(number);
+        }
+        return null;
+    }
+}

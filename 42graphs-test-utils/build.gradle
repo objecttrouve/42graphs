@@ -22,9 +22,42 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+
+
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://m2.neo4j.org/content/repositories/releases/'
+    }
+
+}
+
+
+
+archivesBaseName = "42graphs-test-utils"
+
+
+
+dependencies {
+
+    api project(':42graphs-api')
+    api project(':42graphs-aggregations')
+    api 'org.objecttrouve:convenience-matchers:0.2.0'
+    api group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
+    api group: 'junit', name: 'junit', version: '4.12'
+    implementation group: 'org.neo4j', name: 'neo4j', version: '3.4.0-alpha04'
+    implementation group: 'com.google.guava', name: 'guava', version: '23.6-jre'
+    implementation 'org.neo4j.driver:neo4j-java-driver:1.5.0'
+    implementation 'org.neo4j.test:neo4j-harness:3.4.0-alpha04'
+
+}
+
+
+ext.moduleName = 'org.objecttrouve.fourtytwo.graphs.testutils'
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes('Automatic-Module-Name': moduleName)
+    }
+}

@@ -22,9 +22,29 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.backend.init;
+
+import org.objecttrouve.fourtytwo.graphs.api.Graph;
+import org.objecttrouve.fourtytwo.graphs.api.GraphWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ValidatingEmbeddedBackend implements Graph {
+  private static final Logger logger = LoggerFactory.getLogger(ValidatingWriter.class);
+  private final Graph delegate;
+
+  ValidatingEmbeddedBackend(final Graph delegate) {
+    this.delegate = delegate;
+    logger.debug("Created {}.", ValidatingEmbeddedBackend.class.getName());
+  }
+
+  @Override
+  public GraphWriter writer(final boolean batchMode) {
+    return new ValidatingWriter(delegate.writer(false));
+  }
+
+  @Override
+  public void shutdown() {
+    delegate.shutdown();
+  }
+}

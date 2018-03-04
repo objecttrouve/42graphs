@@ -22,9 +22,36 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://m2.neo4j.org/content/repositories/releases/'
+    }
+
+}
+
+
+archivesBaseName = "42graphs-read"
+
+
+dependencies {
+
+    api project(':42graphs-api')
+    implementation project(':42graphs-aggregations')
+    implementation 'org.neo4j.driver:neo4j-java-driver:1.5.0'
+    implementation group: 'com.google.guava', name: 'guava', version: '23.6-jre'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta0'
+
+    testImplementation project(':42graphs-test-utils')
+    testImplementation project(':42graphs-fill')
+    testImplementation group: 'org.neo4j', name: 'neo4j-bolt', version: '3.4.0-alpha05'
+
+}
+
+ext.moduleName = 'org.objecttrouve.fourtytwo.graphs.read'
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes('Automatic-Module-Name': moduleName)
+    }
+}

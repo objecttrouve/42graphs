@@ -22,9 +22,20 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.api;
+
+import java.util.stream.Stream;
+
+public interface GraphReader {
+    long countNodes(Dimension dimension);
+
+    <T>Stream<Value<T>> streamNodeValues(Dimension dimension, Class<T> klass);
+
+    long countAllValues(Dimension parentDimension, Dimension leafDimension);
+
+    <T> long countOccurrences(Value<T> value, Dimension parentDimension, Dimension leafDimension);
+
+    <T> Stream<AggregatedNeighbour<T>> streamAggregatedNeighbours(Value<T> self, Dimension parentDimension, Dimension leafDimension, int vicinity);
+
+    <T> Stream<AggregatedValue<T>> streamFullyAggregatedValues(Dimension parentDimension, Dimension leafDimension, Class<T> tClass);
+}

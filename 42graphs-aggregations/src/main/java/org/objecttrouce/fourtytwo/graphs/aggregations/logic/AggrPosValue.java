@@ -22,9 +22,47 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouce.fourtytwo.graphs.aggregations.logic;
+
+import org.objecttrouce.fourtytwo.graphs.aggregations.api.ValueWithAggregatedPositions;
+
+import java.util.Map;
+
+import static com.google.common.collect.ImmutableMap.copyOf;
+
+class AggrPosValue<T> implements ValueWithAggregatedPositions{
+
+    private final T t;
+    private final long count;
+    private final Map<Integer, Long> countsPerPosition;
+
+    AggrPosValue(final T t, final long count, final Map<Integer, Long> countsPerPosition) {
+        this.t = t;
+        this.count = count;
+        this.countsPerPosition = copyOf(countsPerPosition);
+    }
+
+    @Override
+    public T getIdentifier() {
+        return t;
+    }
+
+    @Override
+    public long getCount() {
+        return count;
+    }
+
+    @Override
+    public Map<Integer, Long> getCountsPerPosition() {
+        return countsPerPosition;
+    }
+
+    @Override
+    public String toString() {
+        return "AggrPosValue{" +
+            "t=" + t +
+            ", count=" + count +
+            ", countsPerPosition=" + countsPerPosition +
+            '}';
+    }
+}

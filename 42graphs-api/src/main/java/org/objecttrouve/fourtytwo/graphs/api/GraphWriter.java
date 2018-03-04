@@ -22,9 +22,12 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.api;
+
+public interface GraphWriter {
+    void commit();
+
+    <T, U>GraphWriter add(SequenceTree<T, U> sequenceTree);
+
+    void abort();
+}

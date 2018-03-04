@@ -22,9 +22,21 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouve.fourtytwo.graphs.api;
+
+public enum NeighbourQuantityMetric implements QuantityMetric {
+    vicinity(Integer.class),//
+    count(Long.class) //
+    ;
+
+    private final Class<? extends Number> type;
+
+    NeighbourQuantityMetric(final Class<? extends Number> type) {
+        this.type = type;
+    }
+
+    @Override
+    public Class<? extends Number> getType() {
+        return type;
+    }
+}

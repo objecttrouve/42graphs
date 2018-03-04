@@ -22,9 +22,11 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
+package org.objecttrouce.fourtytwo.graphs.aggregations.api;
+
+import org.objecttrouve.fourtytwo.graphs.api.Value;
+
+public interface ValueWithPosition<T> {
+    Value<T> getValue();
+    int getPosition();
+}
