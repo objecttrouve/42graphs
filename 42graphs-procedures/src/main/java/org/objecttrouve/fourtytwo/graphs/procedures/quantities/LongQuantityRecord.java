@@ -24,13 +24,25 @@
 
 package org.objecttrouve.fourtytwo.graphs.procedures.quantities;
 
-import org.objecttrouve.fourtytwo.graphs.api.QuantityMetric;
+
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Value;
+
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 public class LongQuantityRecord {
+
+    public static LongQuantityRecord fromNeoRecord(final Record neoRecord){
+        return new LongQuantityRecord(ofNullable(neoRecord).map (nr -> nr.get("quantity")).map(Value::asLong).orElse(0L));
+    }
 
     public long quantity;
 
     public LongQuantityRecord(final long quantity) {
         this.quantity = quantity;
     }
+
+
 }

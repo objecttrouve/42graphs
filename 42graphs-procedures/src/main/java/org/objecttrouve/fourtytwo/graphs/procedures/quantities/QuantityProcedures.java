@@ -79,7 +79,8 @@ public class QuantityProcedures {
         if (!result.hasNext()){
             return empty();
         }
-        return Stream.of(new LongQuantityRecord((long) result.next().getOrDefault("count(n)", 0L)));
+        return Stream.of(new LongQuantityRecord((long) result.next()//
+            .getOrDefault("count(n)", 0L)));
 
     }
 

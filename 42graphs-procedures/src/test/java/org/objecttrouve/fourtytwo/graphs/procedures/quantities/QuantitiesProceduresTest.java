@@ -31,10 +31,13 @@ import org.junit.Test;
 import org.neo4j.driver.v1.Config;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
-import static org.neo4j.driver.v1.Values.parameters;
+import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.harness.junit.Neo4jRule;
 import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.neo4j.driver.v1.Values.parameters;
 import static org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures.procCountAllValues;
 
 
@@ -42,6 +45,7 @@ public class QuantitiesProceduresTest {
     @Rule
     public Neo4jRule neo4j = new Neo4jRule()
         .withProcedure(QuantityProcedures.class);
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private EmbeddedBackend graph;
     private Driver driver;
 
@@ -57,6 +61,14 @@ public class QuantitiesProceduresTest {
     @Test
     public void countAllValues__empty_graph() throws Throwable {
 
-        driver.session().run( "CALL "+procCountAllValues+"({dimension})", parameters( "dimension", "SomeDim"));
+        final StatementResult result = driver.session()//
+            .run(//
+                "CALL " + procCountAllValues + "({dimension})", //
+                parameters("dimension", "SomeDim"));
+
+        result.list().forEach(r -> {
+            final LongQuantityRecord quantityRecord = LongQuantityRecord.fromNeoRecord(r);
+            assertThat(quantityRecord.quantity, is(0L));
+        });
     }
 }
