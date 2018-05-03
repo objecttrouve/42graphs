@@ -22,10 +22,38 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
-include '42graphs-examples'
+package org.objecttrouve.fourtytwo.graphs.examples.common;
+
+import opennlp.tools.sentdetect.SentenceDetectorME;
+import opennlp.tools.sentdetect.SentenceModel;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public class SentenceDetector {
+
+    private final SentenceDetectorME detector;
+
+    private SentenceDetector(final SentenceDetectorME detector) {
+
+        this.detector = detector;
+    }
+
+    public static SentenceDetector load(final String modelFile){
+        //Loading sentence detector modelFile
+        final InputStream inputStream = ResourceFile.file(modelFile).inputStream();
+        final SentenceModel model;
+        try {
+            model = new SentenceModel(inputStream);
+        } catch (final IOException e) {
+            throw new RuntimeException("Could not load sentence detector modelFile.", e);
+        }
+        //Instantiating the SentenceDetectorME class
+        final SentenceDetectorME detector = new SentenceDetectorME(model);
+        return new SentenceDetector(detector);
+    }
+
+    public String[] process(final String text){
+        return detector.sentDetect(text);
+    }
+}

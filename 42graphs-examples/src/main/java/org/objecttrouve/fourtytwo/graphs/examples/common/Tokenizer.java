@@ -22,10 +22,30 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
-include '42graphs-examples'
+package org.objecttrouve.fourtytwo.graphs.examples.common;
+
+import opennlp.tools.tokenize.TokenizerME;
+import opennlp.tools.tokenize.TokenizerModel;
+import java.io.IOException;
+
+public class Tokenizer {
+
+    private final TokenizerME tokenizerME;
+
+    public static Tokenizer load(final String modelName){
+        try {
+          return  new Tokenizer(new TokenizerME(new TokenizerModel(ResourceFile.file(modelName).inputStream())));
+        } catch (final IOException e) {
+            throw new RuntimeException("Could not load tokenizer model.", e);
+        }
+    }
+
+    private Tokenizer(final TokenizerME tokenizerME) {
+        this.tokenizerME = tokenizerME;
+    }
+
+    public String[] process(final String text){
+        return tokenizerME.tokenize(text);
+    }
+
+}

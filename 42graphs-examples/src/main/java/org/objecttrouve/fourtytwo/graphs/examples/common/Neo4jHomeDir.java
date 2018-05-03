@@ -22,10 +22,29 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
-include '42graphs-examples'
+package org.objecttrouve.fourtytwo.graphs.examples.common;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static java.lang.System.getProperty;
+import static java.lang.System.getenv;
+import static java.util.Optional.ofNullable;
+
+public class Neo4jHomeDir {
+
+    private static final String envvNeo4jHome = "NEO4J_HOME";
+    private static final String syspNeo4jHome = "org.objecttrouve.fourtytwo.graphs" + envvNeo4jHome.toLowerCase();
+    private static final String missingNeo4jHome = "Neo4j home directory not specified." +
+        " Either set environment variable '"+envvNeo4jHome + "'" +
+        " or pass a system property '" + syspNeo4jHome + "'."  ;
+
+    public static Path get(){
+
+       return ofNullable(getenv(envvNeo4jHome))
+            .or(()-> ofNullable(getProperty(syspNeo4jHome)))
+            .map(Paths::get)
+            .orElseThrow(() -> new IllegalArgumentException(missingNeo4jHome));
+    }
+
+}

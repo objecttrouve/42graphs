@@ -22,10 +22,21 @@
  * SOFTWARE.
  */
 
-include '42graphs-api'
-include '42graphs-aggregations'
-include '42graphs-fill'
-include '42graphs-read'
-include '42graphs-procedures'
-include '42graphs-test-utils'
-include '42graphs-examples'
+package org.objecttrouve.fourtytwo.graphs.examples.common;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+
+import java.nio.file.Path;
+
+public class GraphDatabaseServiceFactory {
+    public static GraphDatabaseService dbService(final Path store) {
+        final org.neo4j.kernel.configuration.BoltConnector bolt = new org.neo4j.kernel.configuration.BoltConnector();
+        return new GraphDatabaseFactory()//
+            .newEmbeddedDatabaseBuilder(store.toFile())
+            .setConfig(bolt.type, "BOLT")
+            .setConfig(bolt.enabled, "true")
+            .setConfig(bolt.listen_address, "localhost:7687")
+            .newGraphDatabase();
+    }
+}
