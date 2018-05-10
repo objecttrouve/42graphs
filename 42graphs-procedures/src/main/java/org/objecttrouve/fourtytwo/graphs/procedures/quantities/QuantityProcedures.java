@@ -37,6 +37,7 @@ import org.objecttrouve.fourtytwo.graphs.api.Dimension;
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
 
+import static java.lang.String.*;
 import static java.util.stream.Stream.empty;
 import static org.neo4j.procedure.Mode.READ;
 import static org.objecttrouve.fourtytwo.graphs.pojo.DimensionPojo.toDimension;
@@ -56,7 +57,7 @@ public class QuantityProcedures {
 
         String str(final String... snippets) {
             //noinspection ConfusingArgumentToVarargsMethod
-            return String.format(template, snippets);
+            return format(template, snippets);
         }
 
 

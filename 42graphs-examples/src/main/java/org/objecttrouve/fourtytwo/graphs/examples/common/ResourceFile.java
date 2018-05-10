@@ -35,6 +35,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
+
 public class ResourceFile {
 
     private final String name;
@@ -47,15 +49,15 @@ public class ResourceFile {
     }
 
     InputStream inputStream(){
-        return Optional.ofNullable(this.getClass().getClassLoader().getResourceAsStream(name))
-            .or(() -> {
+        return ofNullable(ofNullable(this.getClass().getClassLoader().getResourceAsStream(name))
+            .orElseGet(() -> {
                 final Path localPath = Paths.get("src/main/resources").resolve(name);
                 try {
-                    return Optional.of(Files.newInputStream(localPath));
+                    return Files.newInputStream(localPath);
                 } catch (IOException e) {
                     throw new IllegalArgumentException("Could not load '" + localPath + "'.");
                 }
-            })
+            }))
             .orElseThrow(()-> new IllegalArgumentException("Could not load '" + name + "'."));
     }
 

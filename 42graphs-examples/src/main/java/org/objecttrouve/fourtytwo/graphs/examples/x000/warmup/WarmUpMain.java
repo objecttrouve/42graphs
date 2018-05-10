@@ -35,7 +35,6 @@ import org.objecttrouve.fourtytwo.graphs.matchers.NeoDbMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static java.lang.String.valueOf;
@@ -52,14 +51,13 @@ public class WarmUpMain {
         logger.info("Running example " + WarmUpMain.class.getSimpleName() + "...");
 
         logger.info("Loading NLP components...");
-
         final SentenceDetector sentenceDetector = SentenceDetector.load("doc/x000/de-sent.bin");
         final Tokenizer tokenizer = Tokenizer.load("doc/x000/de-token.bin");
 
         logger.info("Set up graph access...");
         final Path neo4jHome = Neo4jHomeDir.get();
         final Path store = neo4jHome.resolve("x000.graphdb");
-        Files.createDirectory(store);
+        // Files.createDirectory(store);
         final GraphDatabaseService db = dbService(store);
         final Graph backend = new EmbeddedBackend(()-> db, () -> {
             try {

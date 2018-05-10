@@ -41,8 +41,8 @@ public class Neo4jHomeDir {
 
     public static Path get(){
 
-       return ofNullable(getenv(envvNeo4jHome))
-            .or(()-> ofNullable(getProperty(syspNeo4jHome)))
+       return ofNullable(ofNullable(getenv(envvNeo4jHome))
+            .orElseGet(()-> getProperty(syspNeo4jHome)))
             .map(Paths::get)
             .orElseThrow(() -> new IllegalArgumentException(missingNeo4jHome));
     }

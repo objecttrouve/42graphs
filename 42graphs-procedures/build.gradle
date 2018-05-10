@@ -61,11 +61,11 @@ dependencies {
 //    testImplementation 'org.objecttrouve:convenience-matchers:0.2.0'
     //testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
 
-
-
 }
 
-ext.moduleName = 'org.objecttrouve.fourtytwo.graphs.enhance'
+ext.moduleName = 'org.objecttrouve.fourtytwo.graph.procedures'
+
+
 jar {
     inputs.property("moduleName", moduleName)
     manifest {
