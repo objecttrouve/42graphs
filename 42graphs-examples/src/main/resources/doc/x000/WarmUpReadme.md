@@ -1,6 +1,11 @@
 Warm Up
 =======
 
+This project is all about modelling and quantifying the relations between words from a [corpus](../common/glossary.html#corpus) in a graph. 
+
+Initial Model
+-------------
+We start out with a model that includes tokens, sentences and a document.
 
 
 Sources: 
