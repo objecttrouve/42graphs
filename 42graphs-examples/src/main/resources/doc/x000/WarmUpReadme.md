@@ -1,7 +1,7 @@
 Warm Up
 =======
 
-This project is all about modelling and quantifying the relations between words from a [corpus](../common/glossary.md#corpus) in a graph. 
+This project is all about modelling and quantifying the relations between words from a [corpus](../common/Glossary.md#corpus) in a graph. 
 
 Initial Model
 -------------
