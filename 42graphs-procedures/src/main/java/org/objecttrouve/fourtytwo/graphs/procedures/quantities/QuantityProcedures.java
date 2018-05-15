@@ -44,7 +44,7 @@ import static org.objecttrouve.fourtytwo.graphs.pojo.DimensionPojo.toDimension;
 
 public class QuantityProcedures {
 
-    static final String procCountAllValues = "count.all.values";
+    public static final String procCountAllValues = "count.all.values";
 
     private enum Query {
         countAllValues("MATCH (n:%s) RETURN count(n)") //

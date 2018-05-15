@@ -25,18 +25,25 @@
 package org.objecttrouve.fourtytwo.graphs.examples.common;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import java.nio.file.Path;
 
 public class GraphDatabaseServiceFactory {
     public static GraphDatabaseService dbService(final Path store) {
+        return dbServiceBuilder(store)
+
+            .newGraphDatabase();
+    }
+
+    public static GraphDatabaseBuilder dbServiceBuilder(final Path store) {
         final org.neo4j.kernel.configuration.BoltConnector bolt = new org.neo4j.kernel.configuration.BoltConnector();
         return new GraphDatabaseFactory()//
             .newEmbeddedDatabaseBuilder(store.toFile())
             .setConfig(bolt.type, "BOLT")
             .setConfig(bolt.enabled, "true")
-            .setConfig(bolt.listen_address, "localhost:7687")
-            .newGraphDatabase();
+            .setConfig(bolt.listen_address, "localhost:7687");
     }
+
 }

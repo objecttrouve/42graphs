@@ -35,6 +35,7 @@ import org.objecttrouve.fourtytwo.graphs.matchers.NeoDbMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static java.lang.String.valueOf;
@@ -46,6 +47,7 @@ import static org.objecttrouve.fourtytwo.graphs.examples.common.ResourceFile.fil
 public class WarmUpMain {
 
     private static final Logger logger = LoggerFactory.getLogger(WarmUpMain.class);
+    public static final String warmUpDbDir = "x000.graphdb";
 
     public static void main(final String[] args) throws IOException {
         logger.info("Running example " + WarmUpMain.class.getSimpleName() + "...");
@@ -56,8 +58,8 @@ public class WarmUpMain {
 
         logger.info("Set up graph access...");
         final Path neo4jHome = Neo4jHomeDir.get();
-        final Path store = neo4jHome.resolve("x000.graphdb");
-        // Files.createDirectory(store);
+        final Path store = neo4jHome.resolve(warmUpDbDir);
+        Files.createDirectory(store);
         final GraphDatabaseService db = dbService(store);
         final Graph backend = new EmbeddedBackend(()-> db, () -> {
             try {

@@ -27,20 +27,25 @@ First, let's find out what we can gain from the raw tokens and the positional in
 Get Started...
 --------------
 
-### In the beginning God created the heaven and the earth...
+###In the beginning God created the heaven and the earth...
 
 Let's try this in practice. With a text containing more than three sentences. 
 How about the [Bible](#http://bitimage.dyndns.org/german/MartinLuther-1912/Martin_Luther_Uebersetzung_1912.txt)? It's publicly available. It's long. It contains interesting grammar flavors.
 In German. It's boring to always look at English.
 (The text checked-in with this repo has undergone a bit of data cleaning. In particular the section identifiers heading almost every sentence were removed.) 
  
-### Preprocessing
+###Preprocessing
 
 Thanks to [OpenNLP](https://opennlp.apache.org/) sentence detection and tokenization work like a charm. 
 The models we are using for these tasks are taken from [Sourceforge](http://opennlp.sourceforge.net/models-1.5/) and are included in this repo only to make the example work out of the box.
 
-### Run
+###Run
 
-Do it yourself: 
+Here's how it's done: 
+
+```
+!INCLUDE "../../../java/org/objecttrouve/fourtytwo/graphs/examples/x000/warmup/WarmUpMain.java"
+```
+
 Run `org.objecttrouve.fourtytwo.graphs.examples.x000.warmup.WarmUpMain.main`. 
 The resulting [Neo4j](../common/Glossary.md#neo4j) database contains the [Bible](#http://bitimage.dyndns.org/german/MartinLuther-1912/Martin_Luther_Uebersetzung_1912.txt) in a graph model as described above. 

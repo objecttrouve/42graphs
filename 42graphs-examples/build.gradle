@@ -34,6 +34,7 @@ dependencies {
 
     implementation project(':42graphs-api')
     implementation project(':42graphs-fill')
+    implementation project(':42graphs-procedures')
     implementation project(':42graphs-test-utils')
 
     implementation group: 'org.neo4j', name: 'neo4j-bolt', version: '3.4.0-alpha05'
