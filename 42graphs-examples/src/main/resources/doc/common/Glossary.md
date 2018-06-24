@@ -1,6 +1,10 @@
 Glossary
 ========
 
+<a name="alphabet">Alphabet</a>
+---------------------------------
+Set of distinct [values](#value) in a particular [dimension](#dimension). More formally, [the set of symbols composing the original input sequence][3].
+
 <a name="corpus">Corpus</a>
 ---------------------------------
 A [text corpus](https://en.wikipedia.org/wiki/Text_corpus) consisting of one or more [documents](#document).
@@ -59,15 +63,20 @@ Basically following the [definition on Wikipedia](https://en.wikipedia.org/wiki/
 
 <a name="value">Value</a>
 --------------------------
-Something unique. In the [graph](#graph) model explored in the current project all [nodes](#node) correspond to values.
+Something unique. Formally a [symbol][4] in an [alphabet](#alphabet). 
+In our [graph](#graph) model all [nodes](#node) correspond to values.
 
 <a name="vertex">Vertex</a>
 ----------------------------
 The fundamental unit of [graphs](#graph) in the mathematical sense. See also the [definition on Wikipedia][2]. 
 
-
+<a name="vocabulary">Vocabulary</a>
+------------------------------------
+More intuitive term for [alphabet](#alphabet) when it comes to words. 
 
 
 
 [1]:https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)#Graph
 [2]:https://en.wikipedia.org/wiki/Vertex_(graph_theory)
+[3]:https://en.wikipedia.org/wiki/Alphabet_(formal_languages)
+[4]:https://en.wikipedia.org/wiki/Symbol_(programming)

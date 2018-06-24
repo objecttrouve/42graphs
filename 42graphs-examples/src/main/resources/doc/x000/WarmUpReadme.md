@@ -9,18 +9,18 @@ We start out with a model that includes [tokens](../common/Glossary.md#token), [
 
 Let's say we have a text that contains three sentences: 
 
-  * *This is a simple sentence.*
-  * *It appears in a document.*
-  * *Which is great.*
+  * *"This is a simple sentence."*
+  * *"It appears in a document."*
+  * *"Which is great."*
   
 We transform these three sentences into a hierarchical graph model:  
 
 ![Initial graph model](../img/x000.00.png)
 
-The graph model still reveals that the [token](../common/Glossary.md#token) *This* appears once at position 1 in the first sentence, the token *a* appears twice (once at position 3 in the first sentence and once at position 5 in the second sentence) whereas the fullstop terminates all three sentences.
+The graph model still reveals that the [token](../common/Glossary.md#token) *"This"* appears once at position 1 in the first sentence, the token *"a"* appears twice (once at position 3 in the first sentence and once at position 5 in the second sentence) whereas the fullstop terminates all three sentences.
 (For the sake of readability we start counting at 1 in this example. This may or may not be perpetuated in subsequent examples or code.)
-Hence each [node](../common/Glossary.md#node) in the graph model is an aggregation of all identical surface [occurrences](../common/Glossary.md#occurrence) in the original input sequence.
-Each such aggregation is unique within a particular [dimension](../common/Glossary.md#dimension) and we call it a value. 
+Each [node](../common/Glossary.md#node) in the graph model is an aggregation of all identical surface [occurrences](../common/Glossary.md#occurrence) in the original input sequence.
+Each such aggregation is unique within a particular [dimension](../common/Glossary.md#dimension) and we call it a [value](../common/Glossary.md#value). 
 Note that we haven't aggregated anything else, yet. (No lowercasing, no [lemmatization](../common/Glossary.md#lemmatization), no discarding of punctuation.) We will go for this later.
 First, let's find out what we can gain from the raw tokens and the positional information. Say, if the model is useful at all. 
 

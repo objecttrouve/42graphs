@@ -43,6 +43,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static java.util.Optional.ofNullable;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class CountStuffMain {
     private static final Logger log = LoggerFactory.getLogger(CountStuffMain.class);
@@ -72,6 +74,17 @@ public class CountStuffMain {
         final Result sentenceCountResult = db.execute("CALL count.all.values('Sentence')");
         final Long sentenceCount = getLongQuantity(sentenceCountResult);
         log.info("Number of sentences: " + sentenceCount);
+
+        log.info("Counting all token occurrences...");
+        final Result tokenOccurrencesResult = db.execute("CALL count.all.occurrences('Sentence', 'Token')");
+        final Long tokenOccurrences = getLongQuantity(tokenOccurrencesResult);
+        log.info("Token occurrences: " + tokenOccurrences);
+
+        log.info("Running sanity check...");
+        assertThat(tokenCount, is(23545L));
+        assertThat(sentenceCount, is(32451L));
+        assertThat(tokenOccurrences, is(815492L));
+        log.info("Done!");
     }
 
     private static Long getLongQuantity(final Result result) {
