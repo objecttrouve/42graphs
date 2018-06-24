@@ -44,15 +44,21 @@ import static org.objecttrouve.fourtytwo.graphs.pojo.DimensionPojo.toDimension;
 
 public class QuantityProcedures {
 
+    @SuppressWarnings("WeakerAccess")
     public static final String procCountAllValues = "count.all.values";
+    @SuppressWarnings("WeakerAccess")
+    public static final String procCountAllOccurrences = "count.all.occurrences";
 
     private enum Query {
-        countAllValues("MATCH (n:%s) RETURN count(n)") //
+        countAllValues("MATCH (n:%s) RETURN count(n)", "count(n)"), //
+        countAllOccurrences("MATCH (l:%s)-[r]->(p:%s) RETURN count(r)", "count(r)")
         ;
         final String template;
+        final String resultKey;
 
-        Query(final String template) {
+        Query(final String template, final String result) {
             this.template = template;
+            this.resultKey = result;
         }
 
         String str(final String... snippets) {
@@ -79,17 +85,62 @@ public class QuantityProcedures {
             return empty();
         }
         final Dimension dimension = toDimension(dimensionName);
-        final String query = Query.countAllValues.str(dimension.getName());
+        return execute(Query.countAllValues, dimension.getName());
+    }
+
+    @SuppressWarnings("unused")
+    @Procedure(name = procCountAllOccurrences, mode = READ)
+    @Description("Counts all value occurrences in the given leaf dimension with the given parent dimension.")
+    public Stream<LongQuantityRecord> countAllOccurrences(
+        @Name("parentDimension") final String parentDimensionName,
+        @Name("leafDimension")final String leafDimensionName
+    ) {
+        if (StringUtils.isBlank(parentDimensionName)) {
+            log.warn("Procedure '%s' called with null or empty 'parentDimensionName' parameter. Won't work.", procCountAllOccurrences);
+            return empty();
+        }
+        if (StringUtils.isBlank(leafDimensionName)) {
+            log.warn("Procedure '%s' called with null or empty 'leafDimensionName' parameter. Won't work.", procCountAllOccurrences);
+            return empty();
+        }
+        final Dimension parentDimension = toDimension(parentDimensionName);
+        final Dimension leafDimension = toDimension(leafDimensionName);
+        return execute(Query.countAllOccurrences, leafDimension.getName(), parentDimension.getName());
+    }
+
+    private Stream<LongQuantityRecord> execute(final Query q, final String... args){
+        return executeLongQuery(q.str(args), q.resultKey);
+    }
+
+    private Stream<LongQuantityRecord> executeLongQuery(final String query, final String resultKey) {
         log.debug("Executing query '%s'...", query);
         final Result result = db.execute(query);
         if (!result.hasNext()) {
             return empty();
         }
+        return getLongQuantity(result, resultKey);
+    }
+
+    private Stream<LongQuantityRecord> getLongQuantity(final Result result, final String resultKey) {
         return Stream.of(//
             new LongQuantityRecord(//
                 (long) result.next()//
-                    .getOrDefault("count(n)", 0L)//
+                    .getOrDefault(resultKey, 0L)//
             ));
     }
 
+
+
+    /*
+    @Override
+    public long countAllValues(final Dimension parentDimension, final Dimension leafDimension) {
+        if (parentDimension == null || leafDimension == null) {
+            return 0L;
+        }
+        return inTx((tx -> {
+            final StatementResult resultKey = tx.run("MATCH (:" + leafDimension.getName() + ")-[r]->(:" + parentDimension.getName() + ") RETURN count(r)");
+            return resultKey.hasNext() ? resultKey.next().get("count(r)").asLong() : 0L;
+        }));
+    }
+    */
 }

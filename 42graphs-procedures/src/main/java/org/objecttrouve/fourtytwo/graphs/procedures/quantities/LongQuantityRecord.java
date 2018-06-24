@@ -36,7 +36,10 @@ public class LongQuantityRecord {
     public static final String keyQuantity = "quantity";
 
     public static LongQuantityRecord fromNeoRecord(final Record neoRecord){
-        return new LongQuantityRecord(ofNullable(neoRecord).map (nr -> nr.get(keyQuantity)).map(Value::asLong).orElse(0L));
+        return new LongQuantityRecord(ofNullable(neoRecord)
+            .map (nr -> nr.get(keyQuantity))
+            .map(Value::asLong)
+            .orElse(0L));
     }
 
     public long quantity;

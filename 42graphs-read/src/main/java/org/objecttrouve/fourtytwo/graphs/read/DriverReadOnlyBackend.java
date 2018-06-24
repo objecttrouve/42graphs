@@ -43,6 +43,10 @@ import java.util.stream.StreamSupport;
 import static org.neo4j.driver.v1.Values.parameters;
 import static org.objecttrouve.fourtytwo.graphs.api.Value.idKey;
 
+/**
+ * @deprecation Will be superseded by procedures.
+ */
+@Deprecated
 class DriverReadOnlyBackend implements GraphReader {
 
     private static final List<Class<?>> supportedValueClasses = ImmutableList.of(//
@@ -58,6 +62,10 @@ class DriverReadOnlyBackend implements GraphReader {
         this.aggregator = aggregator;
     }
 
+    /**
+     * @deprecated CALL {@link org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures#countAllValues(java.lang.String)}.
+     */
+    @Deprecated
     @Override
     public long countNodes(final Dimension dimension) {
         if (dimension == null) {
@@ -105,6 +113,10 @@ class DriverReadOnlyBackend implements GraphReader {
             + " is not supported (yet). Currently, you can read the followng types: " + supportedValueClasses);
     }
 
+    /**
+     * @deprecated CALL {@link org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures#countAllOccurrences(java.lang.String, java.lang.String)}.
+     */
+    @Deprecated
     @Override
     public long countAllValues(final Dimension parentDimension, final Dimension leafDimension) {
         if (parentDimension == null || leafDimension == null) {
@@ -116,6 +128,9 @@ class DriverReadOnlyBackend implements GraphReader {
         }));
     }
 
+    /**
+     * Counts occurrences of a particular value in the given dimension.
+     */
     @Override
     public <T> long countOccurrences(final Value<T> value, final Dimension parentDimension, final Dimension leafDimension) {
         if (value == null || parentDimension == null || leafDimension == null) {

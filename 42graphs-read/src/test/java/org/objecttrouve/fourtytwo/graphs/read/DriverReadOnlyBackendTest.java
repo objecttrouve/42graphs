@@ -200,6 +200,7 @@ public class DriverReadOnlyBackendTest {
         assertThat(count, is(0L));
     }
 
+
     @Test
     public void countAllOccurrences__empty_DB() {
         final DriverReadOnlyBackend rob = readOnlyBackend();
