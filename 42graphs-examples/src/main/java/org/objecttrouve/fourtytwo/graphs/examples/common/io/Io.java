@@ -22,29 +22,34 @@
  * SOFTWARE.
  */
 
-package org.objecttrouve.fourtytwo.graphs.examples.common;
+package org.objecttrouve.fourtytwo.graphs.examples.common.io;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Comparator;
 
-import static java.lang.System.getProperty;
-import static java.lang.System.getenv;
-import static java.util.Optional.ofNullable;
 
-public class Neo4jHomeDir {
+public class Io {
 
-    private static final String envvNeo4jHome = "NEO4J_HOME";
-    private static final String syspNeo4jHome = "org.objecttrouve.fourtytwo.graphs" + envvNeo4jHome.toLowerCase();
-    private static final String missingNeo4jHome = "Neo4j home directory not specified." +
-        " Either set environment variable '"+envvNeo4jHome + "'" +
-        " or pass a system property '" + syspNeo4jHome + "'."  ;
+    private static final Logger log = LoggerFactory.getLogger(Io.class);
 
-    public static Path get(){
-
-       return ofNullable(ofNullable(getenv(envvNeo4jHome))
-            .orElseGet(()-> getProperty(syspNeo4jHome)))
-            .map(Paths::get)
-            .orElseThrow(() -> new IllegalArgumentException(missingNeo4jHome));
+    public static void clean(final Path dir){
+        if (Files.exists(dir)) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                Files.walk(dir)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+            } catch( final IOException e){
+                log.info("Could not delete directory '" + dir + "':", e);
+            }
+        }
     }
 
 }

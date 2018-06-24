@@ -22,33 +22,17 @@
  * SOFTWARE.
  */
 
-repositories {
-    mavenCentral()
-}
+package org.objecttrouve.fourtytwo.graphs.examples.common.cmd;
 
+import com.beust.jcommander.JCommander;
 
-archivesBaseName = "42graphs-examples"
-
-
-dependencies {
-
-    implementation project(':42graphs-api')
-    implementation project(':42graphs-fill')
-    implementation project(':42graphs-procedures')
-    implementation project(':42graphs-test-utils')
-
-    implementation group: 'org.neo4j', name: 'neo4j-bolt', version: '3.4.0-alpha05'
-    implementation group: 'org.apache.opennlp', name: 'opennlp-tools', version: '1.8.4'
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta0'
-    implementation group: 'com.google.guava', name: 'guava', version: '23.6-jre'
-    implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.8.0-beta2'
-    implementation group: 'com.beust', name: 'jcommander', version: '1.72'
-}
-
-ext.moduleName = 'org.objecttrouve.fourtytwo.graphs.examples'
-jar {
-    inputs.property("moduleName", moduleName)
-    manifest {
-        attributes('Automatic-Module-Name': moduleName)
+public class CmdLine {
+    public static Args get(final String[] args){
+        final Args cmdArgs = new Args();
+        JCommander.newBuilder()
+            .addObject(cmdArgs)
+            .build()
+            .parse(args);
+        return cmdArgs;
     }
 }

@@ -31,9 +31,12 @@ import org.objecttrouve.fourtytwo.graphs.api.GraphWriter;
 import org.objecttrouve.fourtytwo.graphs.api.SequenceTree;
 import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
 import org.objecttrouve.fourtytwo.graphs.examples.common.*;
+import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.Args;
+import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.CmdLine;
 import org.objecttrouve.fourtytwo.graphs.matchers.NeoDbMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,23 +46,32 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.objecttrouve.fourtytwo.graphs.examples.common.GraphDatabaseServiceFactory.dbService;
 import static org.objecttrouve.fourtytwo.graphs.examples.common.ResourceFile.file;
+import static org.objecttrouve.fourtytwo.graphs.examples.common.io.Io.clean;
 
 public class WarmUpMain {
 
-    private static final Logger logger = LoggerFactory.getLogger(WarmUpMain.class);
+    private static final Logger log = LoggerFactory.getLogger(WarmUpMain.class);
     public static final String warmUpDbDir = "x000.graphdb";
 
     public static void main(final String[] args) throws IOException {
-        logger.info("Running example " + WarmUpMain.class.getSimpleName() + "...");
+        run(CmdLine.get(args));
+    }
 
-        logger.info("Loading NLP components...");
+    public static void run(final Args args) throws IOException {
+        log.info("Running example " + WarmUpMain.class.getSimpleName() + "...");
+        log.info("Loading NLP components...");
         final SentenceDetector sentenceDetector = SentenceDetector.load("doc/x000/de-sent.bin");
         final Tokenizer tokenizer = Tokenizer.load("doc/x000/de-token.bin");
 
-        logger.info("Set up graph access...");
-        final Path neo4jHome = Neo4jHomeDir.get();
-        final Path store = neo4jHome.resolve(warmUpDbDir);
-        Files.createDirectory(store);
+        log.info("Setting up storage directory.");
+        final Path outputDirectory = args.outputDirectory();
+        if (args.isClean()){
+            clean(outputDirectory);
+        }
+        final Path store = outputDirectory.resolve(warmUpDbDir);
+        Files.createDirectories(store);
+
+        log.info("Set up graph access...");
         final GraphDatabaseService db = dbService(store);
         final Graph backend = new EmbeddedBackend(()-> db, () -> {
             try {
@@ -71,7 +83,7 @@ public class WarmUpMain {
         });
         final GraphWriter graphWriter = backend.writer(true);
 
-        logger.info("Slurping text...");
+        log.info("Slurping text...");
         final String text = file("doc/x000/Martin_Luther_Uebersetzung_1912.cleanText.txt").read();
         final String[] sentences = sentenceDetector.process(text);
         int i = 0;
@@ -86,13 +98,15 @@ public class WarmUpMain {
         }
         graphWriter.commit();
 
-        logger.info("Done.");
-
+        log.info("Doing sanity check...");
         /* The GraphWriter closes the DB, so we have to reopen it again here. */
         final GraphDatabaseService reopenedDb = dbService(store);
         /* Let's double-check that the graph has the expected number of nodes. */
         assertThat(reopenedDb, is(NeoDbMatcher.aGraph().ofSize(815492L)));
 
+        log.info("Shutting down...");
+        reopenedDb.shutdown();
+        log.info("Done.");
     }
 
 }

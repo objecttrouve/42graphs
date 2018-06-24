@@ -24,44 +24,54 @@
 
 package org.objecttrouve.fourtytwo.graphs.examples.x001.count;
 
-import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.internal.kernel.api.exceptions.KernelException;
 import org.neo4j.kernel.impl.proc.Procedures;
 import org.neo4j.kernel.internal.GraphDatabaseAPI;
 import org.objecttrouve.fourtytwo.graphs.examples.common.GraphDatabaseServiceFactory;
-import org.objecttrouve.fourtytwo.graphs.examples.common.Neo4jHomeDir;
+import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.Args;
+import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.CmdLine;
 import org.objecttrouve.fourtytwo.graphs.examples.x000.warmup.WarmUpMain;
 import org.objecttrouve.fourtytwo.graphs.procedures.quantities.LongQuantityRecord;
 import org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static java.util.Optional.ofNullable;
 
 public class CountStuffMain {
-    private static final Logger logger = LoggerFactory.getLogger(CountStuffMain.class);
+    private static final Logger log = LoggerFactory.getLogger(CountStuffMain.class);
 
-    public static void main(final String[] args) throws KernelException {
-        final Path store = Neo4jHomeDir.get().resolve(WarmUpMain.warmUpDbDir);
+    public static void main(final String[] cmdLineArgs) throws KernelException, IOException {
+        final Args args = CmdLine.get(cmdLineArgs);
+        run(args);
+    }
 
-        logger.info("Using graph database at " + store + ". Starting up DB service...");
+    private static void run(final Args args) throws IOException, KernelException {
+        log.info("Running example " + CountStuffMain.class.getSimpleName() + "...");
+        final Path store = args.outputDirectory().resolve(WarmUpMain.warmUpDbDir);
+        if (Files.exists(store)){
+            WarmUpMain.run(args);
+        }
+
+        log.info("Using graph database at " + store + ". Starting up DB service...");
         final GraphDatabaseService db = GraphDatabaseServiceFactory.dbService(store);
         ((GraphDatabaseAPI) db).getDependencyResolver().resolveDependency(Procedures.class).registerProcedure(QuantityProcedures.class);
 
-        logger.info("Counting all token value nodes...");
+        log.info("Counting all token value nodes...");
         final Result tokenCountResult = db.execute("CALL count.all.values('Token')");
         final Long tokenCount = getLongQuantity(tokenCountResult);
-        logger.info("Number of distinct tokens: " + tokenCount);
+        log.info("Number of distinct tokens: " + tokenCount);
 
-        logger.info("Counting all sentence value nodes...");
+        log.info("Counting all sentence value nodes...");
         final Result sentenceCountResult = db.execute("CALL count.all.values('Sentence')");
         final Long sentenceCount = getLongQuantity(sentenceCountResult);
-        logger.info("Number of sentences: " + sentenceCount);
-
+        log.info("Number of sentences: " + sentenceCount);
     }
 
     private static Long getLongQuantity(final Result result) {
