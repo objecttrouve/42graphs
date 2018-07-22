@@ -22,33 +22,32 @@
  * SOFTWARE.
  */
 
-package org.objecttrouve.fourtytwo.graphs.matchers;
+package org.objecttrouve.fourtytwo.graphs.procedures.values;
 
+import org.neo4j.driver.v1.Record;
 import org.objecttrouve.fourtytwo.graphs.api.Value;
-import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
 
-import static org.objecttrouve.testing.matchers.ConvenientMatchers.a;
-import static org.objecttrouve.testing.matchers.fluentatts.Attribute.attribute;
+import static java.util.Optional.ofNullable;
 
-public class ValueMatcher<T> extends AbstractMatcherBuilder<Value<T>> {
+public class StringValueRecord implements Value<String> {
+    private static final String keyIdentifier = "identifier";
 
-    public static ValueMatcher<String> aStringValue() {
-        //noinspection unchecked
-        return new ValueMatcher(a(Value.class), String.class);
+    @SuppressWarnings("WeakerAccess")
+    public final String identifier;
+
+    StringValueRecord(final String identifier) {
+        this.identifier = identifier;
     }
 
-    public static <T> ValueMatcher aValueAs(final Class<T> tClass) {
-        //noinspection unchecked
-        return new ValueMatcher(a(Value.class), tClass);
+    @Override
+    public String getIdentifier() {
+        return identifier;
     }
 
-    private ValueMatcher(final FluentAttributeMatcher<Value<T>> matcher, final Class<T> tClass) {
-        super(matcher);
-        this.matcher.with(attribute("class", v -> v.getIdentifier().getClass()), tClass);
-    }
-
-    public ValueMatcher<T> withIdentifier(final T identifyingValue) {
-        super.matcher.with(attribute("identifier", Value::getIdentifier), identifyingValue);
-        return this;
+    static StringValueRecord fromNeoRecord(final Record neoRecord) {
+        return new StringValueRecord(ofNullable(neoRecord)
+            .map (nr -> nr.get(keyIdentifier))
+            .map(org.neo4j.driver.v1.Value::asString)
+            .orElse(""));
     }
 }

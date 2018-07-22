@@ -22,33 +22,20 @@
  * SOFTWARE.
  */
 
-package org.objecttrouve.fourtytwo.graphs.matchers;
+package org.objecttrouve.fourtytwo.graphs.examples.common;
 
 import org.objecttrouve.fourtytwo.graphs.api.Value;
-import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
 
-import static org.objecttrouve.testing.matchers.ConvenientMatchers.a;
-import static org.objecttrouve.testing.matchers.fluentatts.Attribute.attribute;
+public class StringValue implements Value<String> {
 
-public class ValueMatcher<T> extends AbstractMatcherBuilder<Value<T>> {
+    private final String id;
 
-    public static ValueMatcher<String> aStringValue() {
-        //noinspection unchecked
-        return new ValueMatcher(a(Value.class), String.class);
+    public StringValue(final String id) {
+        this.id = id;
     }
 
-    public static <T> ValueMatcher aValueAs(final Class<T> tClass) {
-        //noinspection unchecked
-        return new ValueMatcher(a(Value.class), tClass);
-    }
-
-    private ValueMatcher(final FluentAttributeMatcher<Value<T>> matcher, final Class<T> tClass) {
-        super(matcher);
-        this.matcher.with(attribute("class", v -> v.getIdentifier().getClass()), tClass);
-    }
-
-    public ValueMatcher<T> withIdentifier(final T identifyingValue) {
-        super.matcher.with(attribute("identifier", Value::getIdentifier), identifyingValue);
-        return this;
+    @Override
+    public String getIdentifier() {
+        return id;
     }
 }

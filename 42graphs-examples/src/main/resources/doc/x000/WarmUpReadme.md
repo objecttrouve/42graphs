@@ -49,3 +49,9 @@ Here's how it's done:
 
 Run `org.objecttrouve.fourtytwo.graphs.examples.x000.warmup.WarmUpMain.main`. 
 The resulting [Neo4j](../common/Glossary.md#neo4j) database contains the [Bible](#http://bitimage.dyndns.org/german/MartinLuther-1912/Martin_Luther_Uebersetzung_1912.txt) in a graph model as described above. 
+
+
+What Next?
+----------
+
+Let's [count some stuff](../x001/CountStuffReadme.md) in the new DB. 

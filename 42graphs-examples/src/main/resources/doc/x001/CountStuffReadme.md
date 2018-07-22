@@ -1,7 +1,7 @@
 Count Something...
 ==================
 
-Let's start with something simple. Assume we [warmed up](../x000/WarmUpReadme.md) and slurped a text into the database. What are the first few aggregate values we might want to gain from the database?
+Let's start with something simple. Assume we [warmed up](../x000/WarmUpReadme.md) and slurped a text into the database. What are the first few aggregate figures we might want to gain from the database?
 
 Quantities
 -----------
@@ -37,3 +37,9 @@ Here's how it's done:
 ```
 
 Run `org.objecttrouve.fourtytwo.graphs.examples.x001.count.CountStuffMain.main` to get the first few quantities. 
+
+
+What Next?
+----------
+
+Let's [retrieve some items](../x0002/RetrieveStuffReadme.md) from the graph DB. 

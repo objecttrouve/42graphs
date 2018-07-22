@@ -129,8 +129,9 @@ class DriverReadOnlyBackend implements GraphReader {
     }
 
     /**
-     * Counts occurrences of a particular value in the given dimension.
+     * @deprecated CALL {@link org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures#countOccurrences(java.lang.String, java.lang.String, java.lang.String)}.
      */
+    @Deprecated
     @Override
     public <T> long countOccurrences(final Value<T> value, final Dimension parentDimension, final Dimension leafDimension) {
         if (value == null || parentDimension == null || leafDimension == null) {
@@ -145,7 +146,10 @@ class DriverReadOnlyBackend implements GraphReader {
         }));
     }
 
-
+    /**
+     * @deprecated CALL {@link org.objecttrouve.fourtytwo.graphs.procedures.values.ValueProcedures#retrieveAllValus(java.lang.String)}.
+     */
+    @Deprecated
     Stream<Node> streamNodes(final Dimension dimension) {
         if (dimension == null) {
             return Stream.empty();

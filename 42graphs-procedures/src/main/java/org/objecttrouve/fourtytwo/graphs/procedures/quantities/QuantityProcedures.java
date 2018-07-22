@@ -164,16 +164,5 @@ public class QuantityProcedures {
 
 
 
-    /*
-    @Override
-    public long countAllValues(final Dimension parentDimension, final Dimension leafDimension) {
-        if (parentDimension == null || leafDimension == null) {
-            return 0L;
-        }
-        return inTx((tx -> {
-            final StatementResult resultKey = tx.run("MATCH (:" + leafDimension.getName() + ")-[r]->(:" + parentDimension.getName() + ") RETURN count(r)");
-            return resultKey.hasNext() ? resultKey.next().get("count(r)").asLong() : 0L;
-        }));
-    }
-    */
+
 }
