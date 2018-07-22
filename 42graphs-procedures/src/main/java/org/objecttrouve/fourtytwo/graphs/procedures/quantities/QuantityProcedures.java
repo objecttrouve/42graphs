@@ -48,10 +48,13 @@ public class QuantityProcedures {
     public static final String procCountAllValues = "count.all.values";
     @SuppressWarnings("WeakerAccess")
     public static final String procCountAllOccurrences = "count.all.occurrences";
+    @SuppressWarnings("WeakerAccess")
+    public static final String procCountOccurrences = "count.occurrences";
 
     private enum Query {
-        countAllValues("MATCH (n:%s) RETURN count(n)", "count(n)"), //
-        countAllOccurrences("MATCH (l:%s)-[r]->(p:%s) RETURN count(r)", "count(r)")
+        countAllValues("MATCH (n:%s) RETURN count(n)", "count(n)"),
+        countAllOccurrences("MATCH (l:%s)-[r]->(p:%s) RETURN count(r)", "count(r)"),
+        countOccurrences("MATCH (l:%s{identifier:'%s'})-[r]->(p:%s) RETURN count(r)", "count(r)")
         ;
         final String template;
         final String resultKey;
@@ -107,6 +110,36 @@ public class QuantityProcedures {
         final Dimension leafDimension = toDimension(leafDimensionName);
         return execute(Query.countAllOccurrences, leafDimension.getName(), parentDimension.getName());
     }
+
+
+    @SuppressWarnings("unused")
+    @Procedure(name = procCountOccurrences, mode = READ)
+    @Description("Counts all occurrences of a particular value in the given leaf dimension with the given parent dimension.")
+    public Stream<LongQuantityRecord> countOccurrences(
+        @Name("value") final String value,
+        @Name("parentDimension") final String parentDimensionName,
+        @Name("leafDimension")final String leafDimensionName
+
+    ){
+        if (StringUtils.isBlank(value)) {
+            log.warn("Procedure '%s' called with null or empty 'value' parameter. Won't work.", procCountOccurrences);
+            return empty();
+        }
+        if (StringUtils.isBlank(parentDimensionName)) {
+            log.warn("Procedure '%s' called with null or empty 'parentDimensionName' parameter. Won't work.", procCountOccurrences);
+            return empty();
+        }
+        if (StringUtils.isBlank(leafDimensionName)) {
+            log.warn("Procedure '%s' called with null or empty 'leafDimensionName' parameter. Won't work.", procCountOccurrences);
+            return empty();
+        }
+        final Dimension parentDimension = toDimension(parentDimensionName);
+        final Dimension leafDimension = toDimension(leafDimensionName);
+        return execute(Query.countOccurrences, leafDimension.getName(), value, parentDimension.getName());
+
+
+    }
+
 
     private Stream<LongQuantityRecord> execute(final Query q, final String... args){
         return executeLongQuery(q.str(args), q.resultKey);

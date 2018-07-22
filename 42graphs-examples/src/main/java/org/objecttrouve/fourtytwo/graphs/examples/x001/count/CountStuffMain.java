@@ -80,10 +80,17 @@ public class CountStuffMain {
         final Long tokenOccurrences = getLongQuantity(tokenOccurrencesResult);
         log.info("Token occurrences: " + tokenOccurrences);
 
+
+        log.info("Counting all occurrences of token 'Freude'...");
+        final Result freudOccurrencesResult = db.execute("CALL count.occurrences('Freude', 'Sentence', 'Token')");
+        final Long freudOccurrences = getLongQuantity(freudOccurrencesResult);
+        log.info("'Freude' occurrences: " + freudOccurrences);
+
         log.info("Running sanity check...");
         assertThat(tokenCount, is(23545L));
         assertThat(sentenceCount, is(32451L));
         assertThat(tokenOccurrences, is(815492L));
+        assertThat(freudOccurrences, is(124L));
         log.info("Done!");
     }
 

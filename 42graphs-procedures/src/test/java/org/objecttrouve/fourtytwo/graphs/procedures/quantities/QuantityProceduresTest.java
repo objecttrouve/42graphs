@@ -25,6 +25,7 @@
 package org.objecttrouve.fourtytwo.graphs.procedures.quantities;
 
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,6 +35,7 @@ import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.harness.junit.Neo4jRule;
 import org.objecttrouve.fourtytwo.graphs.api.Dimension;
+import org.objecttrouve.fourtytwo.graphs.api.Value;
 import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
 
 import static java.util.Optional.ofNullable;
@@ -41,9 +43,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.neo4j.driver.v1.Values.parameters;
 import static org.objecttrouve.fourtytwo.graphs.mocks.DimensionMock.dim;
+import static org.objecttrouve.fourtytwo.graphs.mocks.StringValue.str;
 import static org.objecttrouve.fourtytwo.graphs.mocks.TestStringSequenceTree.aStringSequence;
-import static org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures.procCountAllOccurrences;
-import static org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures.procCountAllValues;
+import static org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures.*;
 
 
 public class QuantityProceduresTest {
@@ -329,6 +331,288 @@ public class QuantityProceduresTest {
                 ));
     }
 
+    // --- countOccurrences ---------------------------------------
+
+    @Test
+    public void countOccurrences__empty_DB() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        
+        final long count = quantity(callCountAllOccurrences(str("word"), sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(0L));
+    }
+
+    @Test
+    public void countOccurrences__one_occurrence() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("Word"), sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(1L));
+    }
+
+    @Test
+    public void countOccurrences__one_of_three_in_same_sentence() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Three", "words", ".") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("words"), sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(1L));
+    }
+
+
+    @Test
+    public void countOccurrences__three_of_three_in_same_sentence() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("words", "words", "words") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("words"), sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(3L));
+    }
+
+    @Test
+    public void countOccurrences__two_of_three_in_same_sentence_case_sensitive() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Words", "words", "words") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("words"), sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(2L));
+    }
+
+    @Test
+    public void countOccurrences__multiple_sentences() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Three", "words", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("E") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Second", "sentence", "with", "words", ".") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("words"), sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(2L));
+    }
+
+    @Test
+    public void countOccurrences__null_parent_Dimension() {
+        final Dimension tokens = dim().withName("Token").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("Word"), null, tokens));
+
+        MatcherAssert.assertThat(count, is(0L));
+    }
+
+    @Test
+    public void countOccurrences__null_leaf_Dimension() {
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("Word"), sentences, null));
+
+        MatcherAssert.assertThat(count, is(0L));
+    }
+
+    @Test
+    public void countOccurrences__null_null_Dimension() {
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+        final long count = quantity(callCountAllOccurrences(str("Words"), null, null));
+
+        MatcherAssert.assertThat(count, is(0L));
+    }
+
+    @Test
+    public void countOccurrences__null_Value() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(null, sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(0L));
+    }
+
+    @Test
+    public void countOccurrences__multiple_sentences_and_multiple_dimensions() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Three", "words", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("E") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Second", "sentence", "with", "words", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("LCToken") //
+                    .withLeaves("three", "words", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("E") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("LCToken") //
+                    .withLeaves("second", "sentence", "with", "words", ".") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("words"), sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(2L));
+    }
+
+    @Test
+    public void countOccurrences__multiple_sentences_and_multiple_dimensions_2() {
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Three", "words", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("s") //
+                    .withRootDimension("LCSentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Second", "sentence", "with", "words", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("s") //
+                    .withRootDimension("LCSentence") //
+                    .withLeafDimension("LCToken") //
+                    .withLeaves("three", "words", ".") //
+            ) //
+            .commit();
+
+
+        final long count = quantity(callCountAllOccurrences(str("words"), sentences, tokens));
+
+        MatcherAssert.assertThat(count, is(1L));
+    }
+
+
+    private StatementResult callCountAllOccurrences(final Value<String> value, final Dimension parentDimension, final Dimension leafDimension) {
+        return driver.session()//
+            .run(//
+                "CALL " + procCountOccurrences + "({value},{parentDimension}, {leafDimension})", //
+                parameters(
+                    "value", ofNullable(value).map(Value::getIdentifier).orElse(null),
+                    "parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null),
+                    "leafDimension", ofNullable(leafDimension).map(Dimension::getName).orElse(null)
+                ));
+    }
+    
     // --- shared helpers -----------------------------------------
 
     private Long quantity(final StatementResult result) {

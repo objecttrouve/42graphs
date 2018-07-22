@@ -18,6 +18,12 @@ And how many [tokens](../common/Glossary.md#token) did we have in the original t
 
     MATCH (leafDimension:Token)-[occursIn]->(parentDimension:Sentence) RETURN count(occursIn)
     
+### Number of Token Occurrences
+
+How many times does the word "Freude" occur?
+
+    MATCH (leafDimension:Token{identifier:'Freude'})-[occursIn]->(parentDimension:Sentence) RETURN count(occursIn)
+
 
 Programmatically
 ----------------
