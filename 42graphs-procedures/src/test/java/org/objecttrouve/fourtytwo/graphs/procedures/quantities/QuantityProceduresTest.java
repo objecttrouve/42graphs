@@ -37,7 +37,6 @@ import org.neo4j.harness.junit.Neo4jRule;
 import org.objecttrouve.fourtytwo.graphs.api.Dimension;
 import org.objecttrouve.fourtytwo.graphs.api.Value;
 import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
-
 import static java.util.Optional.ofNullable;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -612,7 +611,301 @@ public class QuantityProceduresTest {
                     "leafDimension", ofNullable(leafDimension).map(Dimension::getName).orElse(null)
                 ));
     }
-    
+
+    // --- countNeighbours -------------------------------------
+
+
+    @Test
+    public void streamNeighbours__no_Tokens() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+
+        final long neighbourCount = quantity(callCountNeighbours(str("Word"), sentences, tokens, 1));
+
+        MatcherAssert.assertThat(neighbourCount, is(0L));
+    }
+
+    @Test
+    public void streamNeighbours__no_neighbours() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("Word"), sentences, tokens, 1));
+
+        MatcherAssert.assertThat(neighbourCount, is(0L));
+    }
+
+    @Test
+    public void streamNeighbours__one_following_Token() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("Word"), sentences, tokens, 1));
+
+        MatcherAssert.assertThat(neighbourCount, is(1L));
+    }
+
+
+    @Test
+    public void streamNeighbours__null_self_arg() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(null, sentences, tokens, 1));
+
+        MatcherAssert.assertThat(neighbourCount, is(0L));
+    }
+
+
+    @Test
+    public void streamNeighbours__null_parentDimension_arg() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("Word"), null, tokens, 1));
+
+        MatcherAssert.assertThat(neighbourCount, is(0L));
+    }
+
+    @Test
+    public void streamNeighbours__null_leafDimension_arg() {
+
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("Word"), sentences, null, 1));
+
+        MatcherAssert.assertThat(neighbourCount, is(0L));
+    }
+
+    @Test
+    public void streamNeighbours__one_preceding_Token() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("one"), sentences, tokens, -1));
+
+        MatcherAssert.assertThat(neighbourCount, is(1L));
+    }
+
+    @Test
+    public void streamNeighbours__self_is_the_closest_neighbour_but_apparently_it_doesnt_match() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("one"), sentences, tokens, 0));
+
+        MatcherAssert.assertThat(neighbourCount, is(0L));
+    }
+
+    @Test
+    public void streamNeighbours__one_neighbour_away() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("Word"), sentences, tokens, 2));
+
+        MatcherAssert.assertThat(neighbourCount, is(1L));
+    }
+
+
+    @Test
+    public void streamNeighbours__across_multiple_sentences() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Sentence", "with", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S2") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Not", "really", "just", "one", "word", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("word"), sentences, tokens, -2));
+
+        MatcherAssert.assertThat(neighbourCount, is(2L));
+    }
+
+    @Test
+    public void streamNeighbours__across_multiple_sentences_same_neighbour_occurs_twice() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Sentence", "with", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S2") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Not", "really", "just", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S3") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("But", "really", "just", "a", "word", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("word"), sentences, tokens, -2));
+
+        MatcherAssert.assertThat(neighbourCount, is(2L));
+    }
+
+
+    @Test
+    public void streamNeighbours__across_multiple_sentences_with_distractors() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Sentence", "with", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("LCSentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("sentence", "with", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S2") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Not", "really", "just", "one", "word", ".") //
+            ) //
+            .commit();
+
+
+        final long neighbourCount = quantity(callCountNeighbours(str("word"), sentences, tokens, -2));
+
+        MatcherAssert.assertThat(neighbourCount, is(2L));
+    }
+
+    private StatementResult callCountNeighbours(final Value<String> self, final Dimension parentDimension, final Dimension leafDimension, final long vicinity) {
+        return driver.session()//
+            .run(//
+                "CALL " + procCountNeighbours + "({self},{parentDimension}, {leafDimension}, {vicinity})", //
+                parameters(
+                    "self", ofNullable(self).map(Value::getIdentifier).orElse(null),
+                    "parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null),
+                    "leafDimension", ofNullable(leafDimension).map(Dimension::getName).orElse(null),
+                    "vicinity", vicinity
+                ));
+    }
+
     // --- shared helpers -----------------------------------------
 
     private Long quantity(final StatementResult result) {

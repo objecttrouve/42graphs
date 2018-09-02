@@ -51,13 +51,12 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
     private static final Function<String, Attribute<Node, Boolean>> nodeDimension = (labelName) -> attribute("dimension '" + labelName + "'", node -> hasLabel(labelName, node));
     private static final Function<Direction, Attribute<Node, Integer>> nodeDegree = (direction) -> attribute("degree", node -> node.getDegree(direction));
     private final Function<String, Attribute<Node, Boolean>> nodeId = (id) -> attribute("id '" + id + "'", node -> hasIdProperty(id, node));
-
     private final Function<Dimension, Attribute<Node, Object>> nodeNrOfChildrenInDimension = (dim) -> attribute("children in dimension '" + dim.getName() + "'", node -> {
         final Object val = node.getProperty(dim.childrenSizeKey(), 0);
-        if (val instanceof Integer){
+        if (val instanceof Integer) {
             return val;
         }
-        return ((Long)val).intValue();
+        return ((Long) val).intValue();
     });
 
     private static final Attribute<Node, Iterable<Relationship>> nodeRelations = attribute("relations", Node::getRelationships);
@@ -66,6 +65,7 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
     private final Attribute<Node, Iterable<Node>> nodeOutgoingRelatedNodes = attribute("outgoing related nodes", this::getOutgoingRelatedNodes);
     private final Attribute<Node, Iterable<Relationship>> nodeIncomingRelationships = attribute("incoming relationships", node -> node.getRelationships(Direction.INCOMING));
     private final Attribute<Node, Iterable<Relationship>> nodeOutgoingRelationships = attribute("outgoing relationships", node -> node.getRelationships(Direction.OUTGOING));
+    private final Attribute<Node, Long> nodePropDirectNeighbourCount = attribute("directNeighbourCount", node -> node.hasProperty("directNeighbourCount") ? (Long) node.getProperty("directNeighbourCount") : 0L);
 
     private Long matchedId = null;
     private boolean unique;
@@ -135,8 +135,6 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
             .anyMatch(l -> Objects.equals(l, root));
     }
 
-
-
     public NeoNodeMatcher ofDegree(final int deg) {
         return ofDirectedDegree(deg, Direction.BOTH);
     }
@@ -199,6 +197,11 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
 
     public NeoNodeMatcher withAllOutgoingRelationsBeing(final NeoRelationMatcher rel) {
         matcher.with(nodeOutgoingRelationships, CoreMatchers.everyItem(rel));
+        return this;
+    }
+
+    public NeoNodeMatcher withPropDirectNeighbourCount(final long expectedCount) {
+        matcher.with(nodePropDirectNeighbourCount, expectedCount);
         return this;
     }
 }

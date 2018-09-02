@@ -26,6 +26,7 @@ package org.objecttrouve.fourtytwo.graphs.procedures.values;
 
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Result;
 import org.neo4j.logging.Log;
 import org.neo4j.procedure.Context;
@@ -48,10 +49,14 @@ public class ValueProcedures {
 
     @SuppressWarnings("WeakerAccess")
     public static final String procRetrieveAllValues = "retrieve.all.values";
+    @SuppressWarnings("WeakerAccess")
+    public static final String procRetrieveNeighbours = "retrieve.neighbours";
 
     private enum Query {
-        retrieveAllValues("MATCH (n:%s) RETURN n.identifier", "n.identifier");
-
+        retrieveAllValues("MATCH (n:%s) RETURN n.identifier", "n.identifier"),
+        retrieveNeighbours("" +
+            "MATCH (:%s{identifier:'%s'})-[spos]->(:%s)<-[vpos]-(neighbour:%s) " +
+            " WHERE vpos.position=spos.position+%s RETURN DISTINCT neighbour", "neighbour"),;
         final String template;
         final String resultKey;
 
@@ -60,7 +65,7 @@ public class ValueProcedures {
             this.resultKey = result;
         }
 
-        String str(final String... snippets) {
+        String str(final Object... snippets) {
             //noinspection ConfusingArgumentToVarargsMethod
             return format(template, snippets);
         }
@@ -76,7 +81,7 @@ public class ValueProcedures {
     @SuppressWarnings("unused")
     @Procedure(name = procRetrieveAllValues, mode = READ)
     @Description("Returns all values in the given dimension.")
-    public Stream<StringValueRecord> retrieveAllValues(@Name("dimension")final String dimension){
+    public Stream<StringValueRecord> retrieveAllValues(@Name("dimension") final String dimension) {
         if (StringUtils.isBlank(dimension)) {
             log.warn("Procedure '%s' called with null or empty 'dimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
             return empty();
@@ -84,8 +89,31 @@ public class ValueProcedures {
         return execute(Query.retrieveAllValues, dimension);
     }
 
+    @SuppressWarnings("unused")
+    @Procedure(name = procRetrieveNeighbours, mode = READ)
+    @Description("Returns all neighbours of the given value in the given dimension with the given parent dimension and the given vicinity.")
+    public Stream<StringValueRecord> retrieveAllNeighbours(
+        @Name("self") final String self,
+        @Name("parentDimension") final String parentDimension,
+        @Name("leafDimension") final String leafDimension,
+        @Name("vicinity") final long vicinity
+    ) {
+        if (StringUtils.isBlank(self)) {
+            log.warn("Procedure '%s' called with null or empty 'self' parameter. Won't return anything meaningful.", procRetrieveAllValues);
+            return empty();
+        }
+        if (StringUtils.isBlank(parentDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
+            return empty();
+        }
+        if (StringUtils.isBlank(leafDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'leafDimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
+            return empty();
+        }
+        return execute(Query.retrieveNeighbours, leafDimension, self, parentDimension, leafDimension, vicinity);
+    }
 
-    private Stream<StringValueRecord> execute(final Query q, final String... args){
+    private Stream<StringValueRecord> execute(final Query q, final Object... args) {
         return executeValueQuery(q.str(args), q.resultKey);
     }
 
@@ -99,8 +127,6 @@ public class ValueProcedures {
     }
 
     private Stream<StringValueRecord> getValues(final Result result, final String resultKey) {
-
-
         final Iterator<Map<String, Object>> itr = new Iterator<Map<String, Object>>() {
             @Override
             public boolean hasNext() {
@@ -113,9 +139,19 @@ public class ValueProcedures {
             }
         };
 
-       return StreamSupport.stream(
+        return StreamSupport.stream(
             Spliterators.spliteratorUnknownSize(itr, Spliterator.ORDERED),
-            false).map(m -> new StringValueRecord((String) m.getOrDefault(resultKey, "")));
+            false).map(m -> {
+            final Object resultObject = m.getOrDefault(resultKey, "");
+            if (resultObject instanceof String){
+                return new StringValueRecord((String) resultObject);
+            } else if (resultObject instanceof Node) {
+                final Object identifier = ((Node) resultObject).getProperty("identifier");
+                return new StringValueRecord((String) identifier);
+            }
+
+            return new StringValueRecord("");
+        });
     }
 
 

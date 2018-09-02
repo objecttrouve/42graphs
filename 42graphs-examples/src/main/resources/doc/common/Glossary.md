@@ -5,9 +5,23 @@ Glossary
 ---------------------------------
 Set of distinct [values](#value) in a particular [dimension](#dimension). More formally, [the set of symbols composing the original input sequence][3].
 
+<a name="content_words">Content Words</a>
+--------------------------------------------
+[Content words](https://en.wikipedia.org/wiki/Content_word) "name objects of reality and their qualities". 
+As opposed to the [function words](#function_words) which establish (grammatical) relations between the content words.
+They belong to the [open classes](https://en.wikipedia.org/wiki/Part_of_speech#Open_and_closed_classes).
+There are way more content words in a language than function words.
+But compared to function words content words occur less often in texts.
+
+
 <a name="corpus">Corpus</a>
 ---------------------------------
 A [text corpus](https://en.wikipedia.org/wiki/Text_corpus) consisting of one or more [documents](#document).
+
+<a name="cypher">Cypher</a>
+---------------------------------
+[Cypher](https://neo4j.com/cypher-graph-query-language/) is [Neo4j's](#neo4j) query language.
+
 
 <a name="dimension">Dimension</a>
 ---------------------------------
@@ -23,6 +37,13 @@ A complete natural language text composed of one or more [sentences](#sentence) 
 <a name="edge">Edge</a>
 -----------------------
 An [edge](https://en.wikipedia.org/wiki/Glossary_of_graph_theory_terms#edge) connects two [vertexes](#vertex) in a [graph](#graph).
+
+<a name="function_words">Function Words</a>
+--------------------------------------------
+[Function words](https://en.wikipedia.org/wiki/Function_word) grammatically glue the so-called [content words](#content_words) together.
+They belong to the [closed classes](https://en.wikipedia.org/wiki/Part_of_speech#Open_and_closed_classes).
+There are only few function words in a language.
+But they are used way more often in texts than content words.
 
 <a name="graph">Graph</a>
 ---------------------------------
@@ -46,6 +67,7 @@ In the [graph](#graph) model explored in the current project all nodes correspon
 ------------------------------------
 A concrete appearance of a [value](#value) at a particular position in the source [sequence](https://en.wikipedia.org/wiki/Sequence).
 E.g. a particular [token](#token) at position *n* in a [sentence](#sentence). Where a sentence is itself uniquely identified by its position *m* in a [document](#document).
+
 
 
 <a name="relationship">Relationship</a>

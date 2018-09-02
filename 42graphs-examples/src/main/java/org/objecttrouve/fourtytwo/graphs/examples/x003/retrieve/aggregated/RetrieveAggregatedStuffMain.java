@@ -22,35 +22,34 @@
  * SOFTWARE.
  */
 
-package org.objecttrouve.fourtytwo.graphs.examples.x002.retrieve;
+package org.objecttrouve.fourtytwo.graphs.examples.x003.retrieve.aggregated;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.internal.kernel.api.exceptions.KernelException;
 import org.neo4j.kernel.impl.proc.Procedures;
 import org.neo4j.kernel.internal.GraphDatabaseAPI;
-import org.objecttrouve.fourtytwo.graphs.api.Value;
 import org.objecttrouve.fourtytwo.graphs.examples.common.GraphDatabaseServiceFactory;
-import org.objecttrouve.fourtytwo.graphs.examples.common.StringValue;
 import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.Args;
 import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.CmdLine;
 import org.objecttrouve.fourtytwo.graphs.examples.x000.warmup.WarmUpMain;
-import org.objecttrouve.fourtytwo.graphs.procedures.values.StringValueRecord;
-import org.objecttrouve.fourtytwo.graphs.procedures.values.ValueProcedures;
+import org.objecttrouve.fourtytwo.graphs.procedures.aggregating.AggregatingProcedures;
+import org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.objecttrouve.fourtytwo.graphs.api.Value.idKey;
 
-public class RetrieveStuffMain {
-    private static final Logger log = LoggerFactory.getLogger(RetrieveStuffMain.class);
+public class RetrieveAggregatedStuffMain {
+    private static final Logger log = LoggerFactory.getLogger(RetrieveAggregatedStuffMain.class);
 
     public static void main(final String[] cmdLineArgs) throws KernelException, IOException {
         final Args args = CmdLine.get(cmdLineArgs);
@@ -58,43 +57,38 @@ public class RetrieveStuffMain {
     }
 
     private static void run(final Args args) throws IOException, KernelException {
-        log.info("Running example " + RetrieveStuffMain.class.getSimpleName() + "...");
+        log.info("Running example " + RetrieveAggregatedStuffMain.class.getSimpleName() + "...");
         final Path store = args.outputDirectory().resolve(WarmUpMain.warmUpDbDir);
-        if (Files.exists(store)) {
+        if (args.isClean()) {
             WarmUpMain.run(args);
         }
-
         log.info("Using graph database at " + store + ". Starting up DB service...");
         final GraphDatabaseService db = GraphDatabaseServiceFactory.dbService(store);
-        ((GraphDatabaseAPI) db).getDependencyResolver()
-            .resolveDependency(Procedures.class)
-            .registerProcedure(ValueProcedures.class);
-
-        log.info("Retrieving all token value nodes...");
-        final Result tokenCountResult = db.execute("CALL retrieve.all.values('Token')");
-        final List<Value<String>> tokens = list(tokenCountResult);
-        log.info("Distinct tokens: ");
-        tokens.forEach(t -> log.info("Next token: " + t.getIdentifier()));
+        final Procedures procedures = ((GraphDatabaseAPI) db).getDependencyResolver()
+            .resolveDependency(Procedures.class);
+        procedures.registerProcedure(QuantityProcedures.class);
+        procedures.registerProcedure(AggregatingProcedures.class);
+        if (args.isClean()) {
+            log.info("Aggregating neighbour counts. This may take a while...");
+            final Instant startAggr = Instant.now();
+            db.execute("CALL aggregate.direct.neighbour.counts('Sentence','Token')");
+            final Duration aggrDuration = Duration.between(startAggr, Instant.now());
+            log.info("Aggregation actually had a duration of " + aggrDuration);
+        }
+        log.info("Retrieve tokens sorted by their number of neighbours. (Descending)...");
+        final Result tokensWithNeighbourCounts = db.execute("MATCH (t:Token)-->(:Sentence) RETURN DISTINCT t.identifier, t.directNeighbourCount ORDER BY t.directNeighbourCount DESC");
+        final long totalNeighbourCount = tokensWithNeighbourCounts.stream()
+            .mapToLong(m -> {
+                long count = (long) Optional.ofNullable(m.getOrDefault("t.directNeighbourCount", -1)).orElse(-1L);
+                log.info("'" + m.getOrDefault("t." + idKey, "") + "': " + count);
+                return count;
+            })
+            .sum();
 
         log.info("Running sanity check...");
-        assertThat(tokens.size(), is(23545));
-
-        log.info("Retrieving all followers of 'Jesus'...");
-        final Result jesusNeighboursResult = db.execute("CALL retrieve.neighbours('Jesus', 'Sentence', 'Token', 1)");
-        final List<Value<String>> neighbours = list(jesusNeighboursResult);
-        log.info("Neighbours: ");
-        neighbours.forEach(n -> log.info("Next neighbour: " + n.getIdentifier()));
-
-        log.info("Running sanity check...");
-        assertThat(neighbours.size(), is(42));
+        assertThat(totalNeighbourCount, is(393175L));
 
         log.info("Done!");
-    }
-
-    private static List<Value<String>> list(final Result tokenCountResult) {
-        return tokenCountResult.stream()
-            .map(m -> new StringValue((String) m.getOrDefault(StringValueRecord.idKey, "")))
-            .collect(toList());
     }
 
 

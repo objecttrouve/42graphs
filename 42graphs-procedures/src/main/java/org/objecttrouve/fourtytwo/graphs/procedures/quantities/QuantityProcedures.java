@@ -50,11 +50,15 @@ public class QuantityProcedures {
     public static final String procCountAllOccurrences = "count.all.occurrences";
     @SuppressWarnings("WeakerAccess")
     public static final String procCountOccurrences = "count.occurrences";
+    @SuppressWarnings("WeakerAccess")
+    public static final String procCountNeighbours = "count.neighbours";
 
     private enum Query {
         countAllValues("MATCH (n:%s) RETURN count(n)", "count(n)"),
         countAllOccurrences("MATCH (l:%s)-[r]->(p:%s) RETURN count(r)", "count(r)"),
-        countOccurrences("MATCH (l:%s{identifier:'%s'})-[r]->(p:%s) RETURN count(r)", "count(r)")
+        countOccurrences("MATCH (l:%s{identifier:'%s'})-[r]->(p:%s) RETURN count(r)", "count(r)"),
+        countNeighbours("MATCH (:%s{identifier:'%s'})-[spos]->(:%s)<-[vpos]-(neighbour:%s) " +
+                               " WHERE vpos.position=spos.position+%s RETURN count(distinct neighbour)", "count(distinct neighbour)")
         ;
         final String template;
         final String resultKey;
@@ -64,7 +68,7 @@ public class QuantityProcedures {
             this.resultKey = result;
         }
 
-        String str(final String... snippets) {
+        String str(final Object... snippets) {
             //noinspection ConfusingArgumentToVarargsMethod
             return format(template, snippets);
         }
@@ -137,11 +141,34 @@ public class QuantityProcedures {
         final Dimension leafDimension = toDimension(leafDimensionName);
         return execute(Query.countOccurrences, leafDimension.getName(), value, parentDimension.getName());
 
+    }
 
+    @SuppressWarnings("unused")
+    @Procedure(name = procCountNeighbours, mode = READ)
+    @Description("Returns all neighbours of the given value in the given dimension with the given parent dimension and the given vicinity.")
+    public Stream<LongQuantityRecord> retrieveAllNeighbours(
+        @Name("self") final String self,
+        @Name("parentDimension") final String parentDimension,
+        @Name("leafDimension") final String leafDimension,
+        @Name("vicinity") final long vicinity
+    ) {
+        if (StringUtils.isBlank(self)) {
+            log.warn("Procedure '%s' called with null or empty 'self' parameter. Won't return anything meaningful.", procCountNeighbours);
+            return empty();
+        }
+        if (StringUtils.isBlank(parentDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't return anything meaningful.", procCountNeighbours);
+            return empty();
+        }
+        if (StringUtils.isBlank(leafDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'leafDimension' parameter. Won't return anything meaningful.", procCountNeighbours);
+            return empty();
+        }
+        return execute(Query.countNeighbours, leafDimension, self, parentDimension, leafDimension, vicinity);
     }
 
 
-    private Stream<LongQuantityRecord> execute(final Query q, final String... args){
+    private Stream<LongQuantityRecord> execute(final Query q, final Object... args){
         return executeLongQuery(q.str(args), q.resultKey);
     }
 

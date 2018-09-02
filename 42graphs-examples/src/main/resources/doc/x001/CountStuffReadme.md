@@ -42,4 +42,4 @@ Run `org.objecttrouve.fourtytwo.graphs.examples.x001.count.CountStuffMain.main` 
 What Next?
 ----------
 
-Let's [retrieve some items](../x0002/RetrieveStuffReadme.md) from the graph DB. 
+Let's [retrieve some items](../x002/RetrieveStuffReadme.md) from the graph DB. 

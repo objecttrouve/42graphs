@@ -38,6 +38,7 @@ import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
 
 import java.util.List;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
@@ -46,6 +47,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.neo4j.driver.v1.Values.parameters;
 import static org.objecttrouve.fourtytwo.graphs.matchers.ValueMatcher.aStringValue;
 import static org.objecttrouve.fourtytwo.graphs.mocks.DimensionMock.dim;
+import static org.objecttrouve.fourtytwo.graphs.mocks.StringValue.str;
 import static org.objecttrouve.fourtytwo.graphs.mocks.TestStringSequenceTree.aStringSequence;
 
 @SuppressWarnings("unchecked")
@@ -67,7 +69,7 @@ public class ValueProceduresTest {
             throw new UnsupportedOperationException("Won't use it here. ");
         });
         driver = GraphDatabase.driver(
-            neo4j.boltURI(), 
+            neo4j.boltURI(),
             Config.build().withoutEncryption().toConfig()
         );
     }
@@ -78,7 +80,7 @@ public class ValueProceduresTest {
 
     @Test
     public void retrieveAllValues__no_Tokens() {
-        
+
         final Dimension tokens = dim().withName("Token").mock();
 
         final List<Value<String>> tokenNodes = values(callRetrieveAllValues(tokens));
@@ -88,7 +90,7 @@ public class ValueProceduresTest {
 
     @Test
     public void retrieveAllValues__one_Token() {
-        
+
         final Dimension tokens = dim().withName("Token").mock();
         graph.writer(noInit) //
             .add( //
@@ -108,7 +110,7 @@ public class ValueProceduresTest {
 
     @Test
     public void retrieveAllValues__multiple_Tokens_from_same_Sentence() {
-        
+
         final Dimension tokens = dim().withName("Token").mock();
         graph.writer(noInit) //
             .add( //
@@ -137,7 +139,7 @@ public class ValueProceduresTest {
 
     @Test
     public void retrieveAllValues__multiple_Tokens_from_multiple_Sentences() {
-        
+
         final Dimension tokens = dim().withName("Token").mock();
         graph.writer(noInit) //
             .add( //
@@ -186,7 +188,7 @@ public class ValueProceduresTest {
 
     @Test
     public void retrieveAllValues__multiple_Tokens_from_multiple_Sentences_and_distractors() {
-        
+
         final Dimension tokens = dim().withName("Token").mock();
         graph.writer(noInit) //
             .add( //
@@ -241,12 +243,318 @@ public class ValueProceduresTest {
     }
 
 
-
     private StatementResult callRetrieveAllValues(final Dimension dimension) {
         return driver.session()//
             .run(//
                 "CALL " + ValueProcedures.procRetrieveAllValues + "({dimension})", //
                 parameters("dimension", dimension.getName()));
+    }
+
+
+    // --- retrieveNeighbours -------------------------------------
+
+
+    @Test
+    public void streamNeighbours__no_Tokens() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("Word"), sentences, tokens, 1));
+
+        assertThat(tokenNodes.size(), is(0));
+    }
+
+    @Test
+    public void streamNeighbours__no_neighbours() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("Word"), sentences, tokens, 1));
+
+        assertThat(tokenNodes.size(), is(0));
+    }
+
+    @Test
+    public void streamNeighbours__one_following_Token() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("Word"), sentences, tokens, 1));
+
+        assertThat(tokenNodes.size(), is(1));
+        assertThat(tokenNodes, hasItem(aStringValue().withIdentifier("one")));
+    }
+
+
+    @Test
+    public void streamNeighbours__null_self_arg() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(null, sentences, tokens, 1));
+
+        assertThat(tokenNodes.size(), is(0));
+    }
+
+
+    @Test
+    public void streamNeighbours__null_parentDimension_arg() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("Word"), null, tokens, 1));
+
+        assertThat(tokenNodes.size(), is(0));
+    }
+
+    @Test
+    public void streamNeighbours__null_leafDimension_arg() {
+
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("Word"), sentences, null, 1));
+
+        assertThat(tokenNodes.size(), is(0));
+    }
+
+    @Test
+    public void streamNeighbours__one_preceding_Token() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("one"), sentences, tokens, -1));
+
+        assertThat(tokenNodes.size(), is(1));
+        assertThat(tokenNodes, hasItem(aStringValue().withIdentifier("Word")));
+    }
+
+    @Test
+    public void streamNeighbours__self_is_the_closest_neighbour_but_apparently_it_doesnt_match() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("one"), sentences, tokens, 0));
+
+        assertThat(tokenNodes.size(), is(0));
+    }
+
+    @Test
+    public void streamNeighbours__one_neighbour_away() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word", "one", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("Word"), sentences, tokens, 2));
+
+        assertThat(tokenNodes.size(), is(1));
+        assertThat(tokenNodes, hasItem(aStringValue().withIdentifier(".")));
+    }
+
+
+    @Test
+    public void streamNeighbours__across_multiple_sentences() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Sentence", "with", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S2") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Not", "really", "just", "one", "word", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("word"), sentences, tokens, -2));
+
+        assertThat(tokenNodes.size(), is(2));
+        assertThat(tokenNodes, hasItem(aStringValue().withIdentifier("with")));
+        assertThat(tokenNodes, hasItem(aStringValue().withIdentifier("just")));
+    }
+
+    @Test
+    public void streamNeighbours__across_multiple_sentences_same_neighbour_occurs_twice() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Sentence", "with", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S2") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Not", "really", "just", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S3") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("But", "really", "just", "a", "word", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("word"), sentences, tokens, -2));
+
+        assertThat(tokenNodes.size(), is(2));
+        assertThat(tokenNodes, hasItems( //
+            aStringValue().withIdentifier("with"),//
+            aStringValue().withIdentifier("just")//
+        ));
+    }
+
+
+    @Test
+    public void streamNeighbours__across_multiple_sentences_with_distractors() {
+
+        final Dimension tokens = dim().withName("Token").mock();
+        final Dimension sentences = dim().withName("Sentence").mock();
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Sentence", "with", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("LCSentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("sentence", "with", "one", "word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S2") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Not", "really", "just", "one", "word", ".") //
+            ) //
+            .commit();
+
+
+        final List<Value<String>> tokenNodes = values(callRetrieveNeighbors(str("word"), sentences, tokens, -2));
+
+        assertThat(tokenNodes.size(), is(2));
+        assertThat(tokenNodes, hasItem(aStringValue().withIdentifier("with")));
+        assertThat(tokenNodes, hasItem(aStringValue().withIdentifier("just")));
+    }
+
+
+    private StatementResult callRetrieveNeighbors(final Value<String> self, final Dimension parentDimension, final Dimension leafDimension, final long vicinity) {
+        return driver.session()//
+            .run(//
+                "CALL " + ValueProcedures.procRetrieveNeighbours + "({self},{parentDimension},{leafDimension},{vicinity})", //
+                parameters(
+                    "self", ofNullable(self).map(Value::getIdentifier).orElse(null),
+                    "leafDimension", ofNullable(leafDimension).map(Dimension::getName).orElse(null),
+                    "parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null),
+                    "vicinity", vicinity
+                ));
     }
 
     // --- shared helpers -----------------------------------------
