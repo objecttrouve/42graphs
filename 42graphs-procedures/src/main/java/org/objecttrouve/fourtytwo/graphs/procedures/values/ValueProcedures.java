@@ -48,9 +48,9 @@ import static org.neo4j.procedure.Mode.READ;
 public class ValueProcedures {
 
     @SuppressWarnings("WeakerAccess")
-    public static final String procRetrieveAllValues = "retrieve.all.values";
+    public static final String procRetrieveAllValues = "org.objecttrouve.fourtytwo.retrieveAllValues";
     @SuppressWarnings("WeakerAccess")
-    public static final String procRetrieveNeighbours = "retrieve.neighbours";
+    public static final String procRetrieveNeighbours = "org.objecttrouve.fourtytwo.retrieveNeighbours";
 
     private enum Query {
         retrieveAllValues("MATCH (n:%s) RETURN n.identifier", "n.identifier"),

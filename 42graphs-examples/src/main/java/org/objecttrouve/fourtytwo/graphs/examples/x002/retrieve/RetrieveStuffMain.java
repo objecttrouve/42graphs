@@ -35,6 +35,7 @@ import org.objecttrouve.fourtytwo.graphs.examples.common.StringValue;
 import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.Args;
 import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.CmdLine;
 import org.objecttrouve.fourtytwo.graphs.examples.x000.warmup.WarmUpMain;
+import org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures;
 import org.objecttrouve.fourtytwo.graphs.procedures.values.StringValueRecord;
 import org.objecttrouve.fourtytwo.graphs.procedures.values.ValueProcedures;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.objecttrouve.fourtytwo.graphs.examples.x001.count.CountStuffMain.*;
 
 public class RetrieveStuffMain {
     private static final Logger log = LoggerFactory.getLogger(RetrieveStuffMain.class);
@@ -66,12 +68,13 @@ public class RetrieveStuffMain {
 
         log.info("Using graph database at " + store + ". Starting up DB service...");
         final GraphDatabaseService db = GraphDatabaseServiceFactory.dbService(store);
-        ((GraphDatabaseAPI) db).getDependencyResolver()
-            .resolveDependency(Procedures.class)
-            .registerProcedure(ValueProcedures.class);
+        final Procedures procedures = ((GraphDatabaseAPI) db).getDependencyResolver()
+            .resolveDependency(Procedures.class);
+        procedures.registerProcedure(ValueProcedures.class);
+        procedures.registerProcedure(QuantityProcedures.class);
 
         log.info("Retrieving all token value nodes...");
-        final Result tokenCountResult = db.execute("CALL retrieve.all.values('Token')");
+        final Result tokenCountResult = db.execute("CALL org.objecttrouve.fourtytwo.retrieveAllValues('Token')");
         final List<Value<String>> tokens = list(tokenCountResult);
         log.info("Distinct tokens: ");
         tokens.forEach(t -> log.info("Next token: " + t.getIdentifier()));
@@ -80,13 +83,18 @@ public class RetrieveStuffMain {
         assertThat(tokens.size(), is(23545));
 
         log.info("Retrieving all followers of 'Jesus'...");
-        final Result jesusNeighboursResult = db.execute("CALL retrieve.neighbours('Jesus', 'Sentence', 'Token', 1)");
+        final Result jesusNeighboursResult = db.execute("CALL org.objecttrouve.fourtytwo.retrieveNeighbours('Jesus', 'Sentence', 'Token', 1)");
         final List<Value<String>> neighbours = list(jesusNeighboursResult);
         log.info("Neighbours: ");
         neighbours.forEach(n -> log.info("Next neighbour: " + n.getIdentifier()));
 
+        log.info("Counting all occurrences of token 'Jesus'...");
+        final Result jesusOccurrencesResult = db.execute("CALL org.objecttrouve.fourtytwo.countOccurrences('Jesus', 'Sentence', 'Token')");
+        final Long jesusOccurrences = getLongQuantity(jesusOccurrencesResult);
+        log.info("Of course, 'Jesus' himself occurs often: " + jesusOccurrences);
+
         log.info("Running sanity check...");
-        assertThat(neighbours.size(), is(42));
+        assertThat(neighbours.size(), is(131));
 
         log.info("Done!");
     }

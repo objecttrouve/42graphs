@@ -45,13 +45,13 @@ import static org.objecttrouve.fourtytwo.graphs.pojo.DimensionPojo.toDimension;
 public class QuantityProcedures {
 
     @SuppressWarnings("WeakerAccess")
-    public static final String procCountAllValues = "count.all.values";
+    public static final String procCountAllValues = "org.objecttrouve.fourtytwo.countAllValues";
     @SuppressWarnings("WeakerAccess")
-    public static final String procCountAllOccurrences = "count.all.occurrences";
+    public static final String procCountAllOccurrences = "org.objecttrouve.fourtytwo.countAllOccurrences";
     @SuppressWarnings("WeakerAccess")
-    public static final String procCountOccurrences = "count.occurrences";
+    public static final String procCountOccurrences = "org.objecttrouve.fourtytwo.countOccurrences";
     @SuppressWarnings("WeakerAccess")
-    public static final String procCountNeighbours = "count.neighbours";
+    public static final String procCountNeighbours = "org.objecttrouve.fourtytwo.countNeighbours";
 
     private enum Query {
         countAllValues("MATCH (n:%s) RETURN count(n)", "count(n)"),

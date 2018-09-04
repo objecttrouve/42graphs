@@ -71,7 +71,7 @@ public class RetrieveAggregatedStuffMain {
         if (args.isClean()) {
             log.info("Aggregating neighbour counts. This may take a while...");
             final Instant startAggr = Instant.now();
-            db.execute("CALL aggregate.direct.neighbour.counts('Sentence','Token')");
+            db.execute("CALL org.objecttrouve.fourtytwo.aggregateDirectNeighbourCounts('Sentence','Token')");
             final Duration aggrDuration = Duration.between(startAggr, Instant.now());
             log.info("Aggregation actually had a duration of " + aggrDuration);
         }

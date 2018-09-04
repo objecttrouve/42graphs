@@ -66,23 +66,23 @@ public class CountStuffMain {
         ((GraphDatabaseAPI) db).getDependencyResolver().resolveDependency(Procedures.class).registerProcedure(QuantityProcedures.class);
 
         log.info("Counting all token value nodes...");
-        final Result tokenCountResult = db.execute("CALL count.all.values('Token')");
+        final Result tokenCountResult = db.execute("CALL org.objecttrouve.fourtytwo.countAllValues('Token')");
         final Long tokenCount = getLongQuantity(tokenCountResult);
         log.info("Number of distinct tokens: " + tokenCount);
 
         log.info("Counting all sentence value nodes...");
-        final Result sentenceCountResult = db.execute("CALL count.all.values('Sentence')");
+        final Result sentenceCountResult = db.execute("CALL org.objecttrouve.fourtytwo.countAllValues('Sentence')");
         final Long sentenceCount = getLongQuantity(sentenceCountResult);
         log.info("Number of sentences: " + sentenceCount);
 
         log.info("Counting all token occurrences...");
-        final Result tokenOccurrencesResult = db.execute("CALL count.all.occurrences('Sentence', 'Token')");
+        final Result tokenOccurrencesResult = db.execute("CALL org.objecttrouve.fourtytwo.countAllOccurrences('Sentence', 'Token')");
         final Long tokenOccurrences = getLongQuantity(tokenOccurrencesResult);
         log.info("Token occurrences: " + tokenOccurrences);
 
 
         log.info("Counting all occurrences of token 'Freude'...");
-        final Result freudOccurrencesResult = db.execute("CALL count.occurrences('Freude', 'Sentence', 'Token')");
+        final Result freudOccurrencesResult = db.execute("CALL org.objecttrouve.fourtytwo.countOccurrences('Freude', 'Sentence', 'Token')");
         final Long freudOccurrences = getLongQuantity(freudOccurrencesResult);
         log.info("'Freude' occurrences: " + freudOccurrences);
 
@@ -94,7 +94,7 @@ public class CountStuffMain {
         log.info("Done!");
     }
 
-    private static Long getLongQuantity(final Result result) {
+    public static Long getLongQuantity(final Result result) {
         return (Long) ofNullable(result)//
             .filter(Result::hasNext)//
             .map(Result::next)//

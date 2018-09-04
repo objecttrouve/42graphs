@@ -37,7 +37,7 @@ import static org.neo4j.procedure.Mode.WRITE;
 public class AggregatingProcedures {
 
     @SuppressWarnings("WeakerAccess")
-    public static final String procAggregateDirectNeighbourCounts = "aggregate.direct.neighbour.counts";
+    public static final String procAggregateDirectNeighbourCounts = "org.objecttrouve.fourtytwo.aggregateDirectNeighbourCounts";
 
     private static final String neighbourCountTemplate = "" +
         "MATCH (n:%s)-[spos]->(:%s)<-[vpos]-(ne:%s) " +
