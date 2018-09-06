@@ -42,7 +42,7 @@ archivesBaseName = "42graphs-test-utils"
 dependencies {
 
     api project(':42graphs-api')
-    api project(':42graphs-aggregations')
+    // api project(':42graphs-aggregations')
     api 'org.objecttrouve:convenience-matchers:0.2.0'
     api group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
     api group: 'junit', name: 'junit', version: '4.12'

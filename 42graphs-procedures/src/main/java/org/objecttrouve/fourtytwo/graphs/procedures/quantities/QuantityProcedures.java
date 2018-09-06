@@ -32,15 +32,12 @@ import org.neo4j.procedure.Context;
 import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
-import org.objecttrouve.fourtytwo.graphs.api.Dimension;
-
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
 
 import static java.lang.String.*;
 import static java.util.stream.Stream.empty;
 import static org.neo4j.procedure.Mode.READ;
-import static org.objecttrouve.fourtytwo.graphs.pojo.DimensionPojo.toDimension;
 
 public class QuantityProcedures {
 
@@ -91,8 +88,7 @@ public class QuantityProcedures {
             log.warn("Procedure '%s' called with null or empty 'dimension' parameter. Won't work.", procCountAllValues);
             return empty();
         }
-        final Dimension dimension = toDimension(dimensionName);
-        return execute(Query.countAllValues, dimension.getName());
+        return execute(Query.countAllValues, dimensionName);
     }
 
     @SuppressWarnings("unused")
@@ -110,9 +106,7 @@ public class QuantityProcedures {
             log.warn("Procedure '%s' called with null or empty 'leafDimensionName' parameter. Won't work.", procCountAllOccurrences);
             return empty();
         }
-        final Dimension parentDimension = toDimension(parentDimensionName);
-        final Dimension leafDimension = toDimension(leafDimensionName);
-        return execute(Query.countAllOccurrences, leafDimension.getName(), parentDimension.getName());
+        return execute(Query.countAllOccurrences, leafDimensionName, parentDimensionName);
     }
 
 
@@ -137,9 +131,7 @@ public class QuantityProcedures {
             log.warn("Procedure '%s' called with null or empty 'leafDimensionName' parameter. Won't work.", procCountOccurrences);
             return empty();
         }
-        final Dimension parentDimension = toDimension(parentDimensionName);
-        final Dimension leafDimension = toDimension(leafDimensionName);
-        return execute(Query.countOccurrences, leafDimension.getName(), value, parentDimension.getName());
+        return execute(Query.countOccurrences, leafDimensionName, value, parentDimensionName);
 
     }
 
