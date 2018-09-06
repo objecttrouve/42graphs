@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static java.util.Optional.ofNullable;
@@ -49,15 +48,19 @@ import static org.junit.Assert.assertThat;
 public class CountStuffMain {
     private static final Logger log = LoggerFactory.getLogger(CountStuffMain.class);
 
-    public static void main(final String[] cmdLineArgs) throws KernelException, IOException {
+    public static void main(final String[] cmdLineArgs)  {
         final Args args = CmdLine.get(cmdLineArgs);
-        run(args);
+        try {
+            run(args);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void run(final Args args) throws IOException, KernelException {
         log.info("Running example " + CountStuffMain.class.getSimpleName() + "...");
         final Path store = args.outputDirectory().resolve(WarmUpMain.warmUpDbDir);
-        if (Files.exists(store)){
+        if (args.isClean()){
             WarmUpMain.run(args);
         }
 
@@ -87,10 +90,14 @@ public class CountStuffMain {
         log.info("'Freude' occurrences: " + freudOccurrences);
 
         log.info("Running sanity check...");
-        assertThat(tokenCount, is(23545L));
+        assertThat(tokenCount, is(22999L));
         assertThat(sentenceCount, is(32451L));
-        assertThat(tokenOccurrences, is(815492L));
+        assertThat(tokenOccurrences, is(813319L));
         assertThat(freudOccurrences, is(124L));
+
+        log.info("Shutting down...");
+        db.shutdown();
+
         log.info("Done!");
     }
 

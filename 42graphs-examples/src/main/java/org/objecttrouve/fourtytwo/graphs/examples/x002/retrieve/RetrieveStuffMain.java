@@ -42,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -54,15 +53,19 @@ import static org.objecttrouve.fourtytwo.graphs.examples.x001.count.CountStuffMa
 public class RetrieveStuffMain {
     private static final Logger log = LoggerFactory.getLogger(RetrieveStuffMain.class);
 
-    public static void main(final String[] cmdLineArgs) throws KernelException, IOException {
+    public static void main(final String[] cmdLineArgs) {
         final Args args = CmdLine.get(cmdLineArgs);
-        run(args);
+        try {
+            run(args);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void run(final Args args) throws IOException, KernelException {
         log.info("Running example " + RetrieveStuffMain.class.getSimpleName() + "...");
         final Path store = args.outputDirectory().resolve(WarmUpMain.warmUpDbDir);
-        if (Files.exists(store)) {
+        if (args.isClean()) {
             WarmUpMain.run(args);
         }
 
@@ -80,7 +83,7 @@ public class RetrieveStuffMain {
         tokens.forEach(t -> log.info("Next token: " + t.getIdentifier()));
 
         log.info("Running sanity check...");
-        assertThat(tokens.size(), is(23545));
+        assertThat(tokens.size(), is(22999));
 
         log.info("Retrieving all followers of 'Jesus'...");
         final Result jesusNeighboursResult = db.execute("CALL org.objecttrouve.fourtytwo.retrieveNeighbours('Jesus', 'Sentence', 'Token', 1)");
@@ -95,6 +98,9 @@ public class RetrieveStuffMain {
 
         log.info("Running sanity check...");
         assertThat(neighbours.size(), is(131));
+
+        log.info("Shutting down...");
+        db.shutdown();
 
         log.info("Done!");
     }

@@ -22,35 +22,42 @@
  * SOFTWARE.
  */
 
-package org.objecttrouve.fourtytwo.graphs.examples.common.io;
+package org.objecttrouve.fourtytwo.graphs.examples;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.After;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.objecttrouve.fourtytwo.graphs.examples.x000.warmup.WarmUpMain;
+import org.objecttrouve.fourtytwo.graphs.examples.x001.count.CountStuffMain;
+import org.objecttrouve.fourtytwo.graphs.examples.x002.retrieve.RetrieveStuffMain;
+import org.objecttrouve.fourtytwo.graphs.examples.x003.retrieve.aggregated.RetrieveAggregatedStuffMain;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
+import java.util.function.Consumer;
 
+public class ExamplesSanityTest {
 
-public class Io {
+    @Rule
+    public TemporaryFolder tmpFolder = new TemporaryFolder();
 
-    private static final Logger log = LoggerFactory.getLogger(Io.class);
-
-    public static void clean(final Path dir){
-        if (Files.exists(dir)) {
-            log.info("Cleaning output directory " + dir.toAbsolutePath() + "...");
-            try {
-                //noinspection ResultOfMethodCallIgnored
-                Files.walk(dir)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-            } catch( final IOException e){
-                log.info("Could not delete directory '" + dir + "':", e);
-            }
-        }
+    @After
+    public void cleanup(){
+        tmpFolder.delete();
     }
 
+    @Test
+    public void run_all_examples() throws IOException {
+        run(WarmUpMain::main);
+        run(CountStuffMain::main);
+        run(RetrieveStuffMain::main);
+        run(RetrieveAggregatedStuffMain::main);
+    }
+
+    private void run(final Consumer<String[]> main) throws IOException {
+        final Path db = tmpFolder.newFolder().toPath();
+        final String[] args = {"-o", db.toAbsolutePath().toString(), "-c"};
+        main.accept(args);
+    }
 }

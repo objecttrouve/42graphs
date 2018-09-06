@@ -53,8 +53,12 @@ public class WarmUpMain {
     private static final Logger log = LoggerFactory.getLogger(WarmUpMain.class);
     public static final String warmUpDbDir = "x000.graphdb";
 
-    public static void main(final String[] args) throws IOException {
-        run(CmdLine.get(args));
+    public static void main(final String[] args) {
+        try {
+            run(CmdLine.get(args));
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void run(final Args args) throws IOException {
@@ -70,6 +74,7 @@ public class WarmUpMain {
         }
         final Path store = outputDirectory.resolve(warmUpDbDir);
         Files.createDirectories(store);
+        log.info("Using DB store " + store.toAbsolutePath() + ".");
 
         log.info("Set up graph access...");
         final GraphDatabaseService db = dbService(store);
@@ -102,7 +107,7 @@ public class WarmUpMain {
         /* The GraphWriter closes the DB, so we have to reopen it again here. */
         final GraphDatabaseService reopenedDb = dbService(store);
         /* Let's double-check that the graph has the expected number of nodes. */
-        assertThat(reopenedDb, is(NeoDbMatcher.aGraph().ofSize(815492L)));
+        assertThat(reopenedDb, is(NeoDbMatcher.aGraph().ofSize(813319L)));
 
         log.info("Shutting down...");
         reopenedDb.shutdown();

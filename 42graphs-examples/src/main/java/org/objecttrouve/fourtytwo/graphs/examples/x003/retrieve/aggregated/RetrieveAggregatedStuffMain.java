@@ -51,9 +51,13 @@ import static org.objecttrouve.fourtytwo.graphs.api.Value.idKey;
 public class RetrieveAggregatedStuffMain {
     private static final Logger log = LoggerFactory.getLogger(RetrieveAggregatedStuffMain.class);
 
-    public static void main(final String[] cmdLineArgs) throws KernelException, IOException {
+    public static void main(final String[] cmdLineArgs) {
         final Args args = CmdLine.get(cmdLineArgs);
-        run(args);
+        try {
+            run(args);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void run(final Args args) throws IOException, KernelException {
@@ -86,7 +90,10 @@ public class RetrieveAggregatedStuffMain {
             .sum();
 
         log.info("Running sanity check...");
-        assertThat(totalNeighbourCount, is(393175L));
+        assertThat(totalNeighbourCount, is(389851L));
+
+        log.info("Shutting down...");
+        db.shutdown();
 
         log.info("Done!");
     }
