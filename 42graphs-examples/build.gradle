@@ -39,7 +39,7 @@ dependencies {
 
     implementation group: 'org.neo4j', name: 'neo4j-bolt', version: '3.5.1'
     implementation group: 'org.apache.opennlp', name: 'opennlp-tools', version: '1.8.4'
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta0'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta2'
     implementation group: 'com.google.guava', name: 'guava', version: '27.0.1-jre'
     implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.8.0-beta2'
     implementation group: 'com.beust', name: 'jcommander', version: '1.72'
