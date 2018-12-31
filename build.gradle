@@ -157,3 +157,4 @@ subprojects {
 
 }
 
+tasks.signArchives.onlyIf { project.hasProperty('doSignArchives') }
