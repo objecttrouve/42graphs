@@ -52,3 +52,8 @@ jar {
         attributes('Automatic-Module-Name': moduleName)
     }
 }
+
+license {
+    exclude '**/draw.io/**'
+    exclude '**/Martin_Luther_Uebersetzung_1912.cleanText.txt'
+}
