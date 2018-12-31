@@ -155,6 +155,6 @@ subprojects {
         dependencyConfiguration = 'licenses'
     }
 
+    tasks.signArchives.onlyIf { project.hasProperty('doSignArchives') }
 }
 
-tasks.signArchives.onlyIf { project.hasProperty('doSignArchives') }
