@@ -65,7 +65,10 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
     private final Attribute<Node, Iterable<Node>> nodeOutgoingRelatedNodes = attribute("outgoing related nodes", this::getOutgoingRelatedNodes);
     private final Attribute<Node, Iterable<Relationship>> nodeIncomingRelationships = attribute("incoming relationships", node -> node.getRelationships(Direction.INCOMING));
     private final Attribute<Node, Iterable<Relationship>> nodeOutgoingRelationships = attribute("outgoing relationships", node -> node.getRelationships(Direction.OUTGOING));
-    private final Attribute<Node, Long> nodePropDirectNeighbourCount = attribute("directNeighbourCount", node -> node.hasProperty("directNeighbourCount") ? (Long) node.getProperty("directNeighbourCount") : 0L);
+
+    private static Attribute<Node, Long> nodePropDirectNeighbourCount(final String dimension) {
+        return attribute("directNeighbourCount_"+dimension, node -> node.hasProperty("directNeighbourCount_"+dimension) ? (Long) node.getProperty("directNeighbourCount_"+dimension) : 0L);
+    }
 
     private Long matchedId = null;
     private boolean unique;
@@ -200,8 +203,8 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
         return this;
     }
 
-    public NeoNodeMatcher withPropDirectNeighbourCount(final long expectedCount) {
-        matcher.with(nodePropDirectNeighbourCount, expectedCount);
+    public NeoNodeMatcher withPropDirectNeighbourCount(final String dimension, final long expectedCount) {
+        matcher.with(nodePropDirectNeighbourCount(dimension), expectedCount);
         return this;
     }
 }

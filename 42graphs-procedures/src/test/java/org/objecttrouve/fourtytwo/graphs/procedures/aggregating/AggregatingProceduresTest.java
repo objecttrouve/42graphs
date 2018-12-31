@@ -103,7 +103,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(0L)
+                .withPropDirectNeighbourCount("Token", 0L)
         )));
     }
 
@@ -125,7 +125,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(1L)
+                .withPropDirectNeighbourCount("Token",1L)
         )));
     }
 
@@ -147,7 +147,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(1L)
+                .withPropDirectNeighbourCount("Token",1L)
         )));
     }
 
@@ -176,7 +176,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(2L)
+                .withPropDirectNeighbourCount("Token",2L)
         )));
     }
 
@@ -205,7 +205,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(2L)
+                .withPropDirectNeighbourCount("Token",2L)
         )));
     }
 
@@ -227,7 +227,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(0L)
+                .withPropDirectNeighbourCount("Token",0L)
         )));
     }
 
@@ -249,7 +249,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(0L)
+                .withPropDirectNeighbourCount("Token",0L)
         )));
     }
 
@@ -271,7 +271,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(2L)
+                .withPropDirectNeighbourCount("Token",2L)
         )));
     }
 
@@ -316,7 +316,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(3L + 3L)
+                .withPropDirectNeighbourCount("Token",3L + 3L)
         )));
     }
 
@@ -339,7 +339,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(4L)
+                .withPropDirectNeighbourCount("Token",4L)
         )));
     }
 
@@ -361,7 +361,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(4L)
+                .withPropDirectNeighbourCount("Token",4L)
         )));
     }
 
@@ -383,7 +383,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("Word")
-                .withPropDirectNeighbourCount(4L)
+                .withPropDirectNeighbourCount("Token",4L)
         )));
     }
 
@@ -449,7 +449,7 @@ public class AggregatingProceduresTest {
                 .withIdentifier("Word")
                 .inDimension("Token")
                 .unique()
-                .withPropDirectNeighbourCount(3L + 3L)
+                .withPropDirectNeighbourCount("Token",3L + 3L)
         )));
     }
 

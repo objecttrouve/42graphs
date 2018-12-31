@@ -43,7 +43,7 @@ public class AggregatingProcedures {
         "MATCH (n:%s)-[spos]->(:%s)<-[vpos]-(ne:%s) " +
         " WHERE vpos.position=spos.position+1 OR vpos.position=spos.position-1" +
         " WITH n AS node, count(distinct ne) AS cf " +
-        " SET node.directNeighbourCount = cf " +
+        " SET node.directNeighbourCount_%s = cf " +
         "";
 
     @SuppressWarnings("WeakerAccess")
@@ -68,7 +68,7 @@ public class AggregatingProcedures {
             log.warn("Procedure '%s' called with null or empty 'leafDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
             return;
         }
-        final String query = String.format(neighbourCountTemplate, leafDimension, parentDimension, leafDimension);
+        final String query = String.format(neighbourCountTemplate, leafDimension, parentDimension, leafDimension, leafDimension);
         db.execute(query);
     }
 

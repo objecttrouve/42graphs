@@ -80,10 +80,10 @@ public class RetrieveAggregatedStuffMain {
             log.info("Aggregation actually had a duration of " + aggrDuration);
         }
         log.info("Retrieve tokens sorted by their number of neighbours. (Descending)...");
-        final Result tokensWithNeighbourCounts = db.execute("MATCH (t:Token)-->(:Sentence) RETURN DISTINCT t.identifier, t.directNeighbourCount ORDER BY t.directNeighbourCount DESC");
+        final Result tokensWithNeighbourCounts = db.execute("MATCH (t:Token)-->(:Sentence) RETURN DISTINCT t.identifier, t.directNeighbourCount_Token ORDER BY t.directNeighbourCount_Token DESC");
         final long totalNeighbourCount = tokensWithNeighbourCounts.stream()
             .mapToLong(m -> {
-                long count = (long) Optional.ofNullable(m.getOrDefault("t.directNeighbourCount", -1)).orElse(-1L);
+                long count = (long) Optional.ofNullable(m.getOrDefault("t.directNeighbourCount_Token", -1)).orElse(-1L);
                 log.info("'" + m.getOrDefault("t." + idKey, "") + "': " + count);
                 return count;
             })
