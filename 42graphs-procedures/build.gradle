@@ -27,9 +27,6 @@ buildscript {
     repositories {
         jcenter()
     }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
-    }
 }
 
 repositories {
@@ -40,12 +37,7 @@ repositories {
 
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
-
-
 archivesBaseName = "42graphs-procedures"
-
-
 
 dependencies {
 
@@ -57,14 +49,9 @@ dependencies {
 
     testImplementation project(':42graphs-fill')
     testImplementation project(':42graphs-test-utils')
-   // testImplementation group: 'junit', name: 'junit', version: '4.12'
-//    testImplementation 'org.objecttrouve:convenience-matchers:0.2.0'
-    //testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
-
 }
 
 ext.moduleName = 'org.objecttrouve.fourtytwo.graph.procedures'
-
 
 jar {
     inputs.property("moduleName", moduleName)
@@ -73,4 +60,13 @@ jar {
     }
 }
 
-tasks.build.dependsOn(shadowJar)
+task fatJar(type: Jar) {
+    zip64 true
+    baseName = project.name + '-all'
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+tasks.build.dependsOn(fatJar)
