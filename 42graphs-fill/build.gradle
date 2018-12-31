@@ -41,7 +41,6 @@ archivesBaseName = "42graphs-fill"
 
 
 dependencies {
-
     api project(':42graphs-api')
     implementation group: 'org.neo4j', name: 'neo4j', version: '3.5.1'
     implementation 'org.neo4j.driver:neo4j-java-driver:1.7.2'
@@ -49,10 +48,6 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta2'
 
     testImplementation project(':42graphs-test-utils')
-   // testImplementation group: 'junit', name: 'junit', version: '4.12'
-//    testImplementation 'org.objecttrouve:convenience-matchers:0.2.0'
-    //testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
-
 }
 
 ext.moduleName = 'org.objecttrouve.fourtytwo.graphs.enhance'
