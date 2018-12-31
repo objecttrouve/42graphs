@@ -37,7 +37,7 @@ dependencies {
     implementation project(':42graphs-procedures')
     implementation project(':42graphs-test-utils')
 
-    implementation group: 'org.neo4j', name: 'neo4j-bolt', version: '3.4.0-alpha05'
+    implementation group: 'org.neo4j', name: 'neo4j-bolt', version: '3.5.1'
     implementation group: 'org.apache.opennlp', name: 'opennlp-tools', version: '1.8.4'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta0'
     implementation group: 'com.google.guava', name: 'guava', version: '23.6-jre'
