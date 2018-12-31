@@ -27,7 +27,9 @@ package org.objecttrouve.fourtytwo.graphs.examples;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
+import org.objecttrouve.fourtytwo.graphs.categories.Snore;
 import org.objecttrouve.fourtytwo.graphs.examples.x000.warmup.WarmUpMain;
 import org.objecttrouve.fourtytwo.graphs.examples.x001.count.CountStuffMain;
 import org.objecttrouve.fourtytwo.graphs.examples.x002.retrieve.RetrieveStuffMain;
@@ -37,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
+@Category(Snore.class)
 public class ExamplesSanityTest {
 
     @Rule

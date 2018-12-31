@@ -75,6 +75,12 @@ subprojects {
         from sourceSets.main.allSource
     }
 
+    test {
+        useJUnit {
+            excludeCategories 'org.objecttrouve.fourtytwo.graphs.categories.Snore'
+        }
+    }
+
     artifacts {
         archives jar, javadocJar, sourcesJar
     }
