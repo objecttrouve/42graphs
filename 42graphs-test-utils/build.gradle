@@ -42,13 +42,13 @@ archivesBaseName = "42graphs-test-utils"
 dependencies {
 
     api project(':42graphs-api')
-    api 'org.objecttrouve:convenience-matchers:0.5.0'
-    api group: 'org.mockito', name: 'mockito-core', version: '2.23.4'
-    api group: 'junit', name: 'junit', version: '4.12'
-    api group: 'org.neo4j', name: 'neo4j', version: '3.5.1'
-    api group: 'com.google.guava', name: 'guava', version: '27.0.1-jre'
-    api 'org.neo4j.driver:neo4j-java-driver:1.7.2'
-    api 'org.neo4j.test:neo4j-harness:3.5.1'
+    api "org.objecttrouve:convenience-matchers:$libVersionConvenienceMatchers"
+    api group: 'org.mockito', name: 'mockito-core', version: libVersionMockito
+    api group: 'junit', name: 'junit', version: libVersionJUnit
+    api group: 'org.neo4j', name: 'neo4j', version: libVersionNeo4jX
+    api group: 'com.google.guava', name: 'guava', version: libVersionGuava
+    api "org.neo4j.driver:neo4j-java-driver:$libVersionNeo4jJavaDriver"
+    api "org.neo4j.test:neo4j-harness:$libVersionNeo4jX"
 
 }
 
