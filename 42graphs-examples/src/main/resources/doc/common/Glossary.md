@@ -30,6 +30,11 @@ The [graph](#graph) model explored in this project is basically a space of coord
 The [value](#value) type, the containing element and the position of the occurrence in the containing element. 
 (Neglecting the fact that value types don't have an intrinsically meaningful order. We can always enumerate them.)
 
+<a name="directNeighbourCount">Direct Neighbour Count</a>
+----------------------------------------------------------
+Number of distinct adjacent left and right neighbours of a [token](#token) in a [corpus](#corpus).
+
+
 <a name="document">Document</a>
 ---------------------------------
 A complete natural language text composed of one or more [sentences](#sentence) neglecting any markup. See also the [Wikipedia article](https://en.wikipedia.org/wiki/Document).
