@@ -58,6 +58,10 @@ In theory just a [graph in the mathematical sense][1]. Technically a structure i
 ------------------------------------------
 Let's just go with the [definition by Stanford NLP](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html).
 
+<a name="length">Length (Parent [Node](#node) Property 'length_<dimension>')</a>
+---------------------------------------------------
+The number of child items in a given [dimension](#dimension).
+
 
 <a name="neo4j">Neo4j</a>
 --------------------------

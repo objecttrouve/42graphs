@@ -38,6 +38,8 @@ public class AggregatingProcedures {
 
     @SuppressWarnings("WeakerAccess")
     public static final String procAggregateDirectNeighbourCounts = "org.objecttrouve.fourtytwo.aggregateDirectNeighbourCounts";
+    @SuppressWarnings("WeakerAccess")
+    public static final String procAggregateLength = "org.objecttrouve.fourtytwo.aggregateLength";
 
     private static final String neighbourCountTemplate = "" +
         "MATCH (n:%s)-[spos]->(:%s)<-[vpos]-(ne:%s) " +
@@ -46,7 +48,12 @@ public class AggregatingProcedures {
         " SET node.directNeighbourCount_%s = cf " +
         "";
 
-    @SuppressWarnings("WeakerAccess")
+    private static final String lengthTemplate = "" +
+        "MATCH (c:%s)-->(p:%s) " +
+        " WITH p AS parent, count(c) AS l " +
+        " SET parent.length_%s = l " +
+        "";
+
     @Context
     public GraphDatabaseService db;
     @SuppressWarnings("WeakerAccess")
@@ -55,20 +62,39 @@ public class AggregatingProcedures {
 
     @SuppressWarnings("unused")
     @Procedure(name = procAggregateDirectNeighbourCounts, mode = WRITE)
-    @Description("Aggregates the counts of directly preceding and following node in the leafDimension")
+    @Description("Aggregates the counts of directly preceding and following node in the childDimension")
     public void aggregateDirectNeighbourCount(
         @Name("parentDimension") final String parentDimension,
-        @Name("leafDimension") final String leafDimension
+        @Name("childDimension") final String childDimension
     ) {
         if (StringUtils.isBlank(parentDimension)) {
             log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
             return;
         }
-        if (StringUtils.isBlank(leafDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'leafDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
+        if (StringUtils.isBlank(childDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
             return;
         }
-        final String query = String.format(neighbourCountTemplate, leafDimension, parentDimension, leafDimension, leafDimension);
+        final String query = String.format(neighbourCountTemplate, childDimension, parentDimension, childDimension, childDimension);
+        db.execute(query);
+    }
+
+    @SuppressWarnings("unused")
+    @Procedure(name = procAggregateLength, mode = WRITE)
+    @Description("Aggregates the length of a parent item = the number of child items in a child dimension.")
+    public void aggregateLength(
+        @Name("parentDimension") final String parentDimension,
+        @Name("childDimension") final String childDimension
+    ) {
+        if (StringUtils.isBlank(parentDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
+            return;
+        }
+        if (StringUtils.isBlank(childDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
+            return;
+        }
+        final String query = String.format(lengthTemplate, childDimension, parentDimension, childDimension);
         db.execute(query);
     }
 

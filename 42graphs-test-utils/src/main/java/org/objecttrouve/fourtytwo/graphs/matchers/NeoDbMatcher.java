@@ -24,14 +24,12 @@
 
 package org.objecttrouve.fourtytwo.graphs.matchers;
 
-
-import org.hamcrest.CoreMatchers;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.objecttrouve.testing.matchers.ConvenientMatchers;
 import org.objecttrouve.testing.matchers.fluentatts.Attribute;
 import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
 
+import static org.objecttrouve.fourtytwo.graphs.matchers.Matchers.an;
 import static org.objecttrouve.testing.matchers.fluentatts.Attribute.attribute;
 
 
@@ -61,11 +59,11 @@ public class NeoDbMatcher extends AbstractMatcherBuilder<GraphDatabaseService> {
 
 
     public static NeoDbMatcher theEmptyGraph() {
-        return new NeoDbMatcher(ConvenientMatchers.a(GraphDatabaseService.class)).withoutNodes();
+        return new NeoDbMatcher(an.instanceOf(GraphDatabaseService.class)).withoutNodes();
     }
 
     public static NeoDbMatcher aGraph() {
-        return new NeoDbMatcher(ConvenientMatchers.a(GraphDatabaseService.class));
+        return new NeoDbMatcher(an.instanceOf(GraphDatabaseService.class));
     }
 
     private NeoDbMatcher(final FluentAttributeMatcher<GraphDatabaseService> matcher) {
@@ -78,9 +76,17 @@ public class NeoDbMatcher extends AbstractMatcherBuilder<GraphDatabaseService> {
         return this;
     }
 
-    public NeoDbMatcher containing(final NeoNodeMatcher... neoNodeMatcher) {
+    public NeoDbMatcher containing(final NeoNodeMatcher... neoNodeMatchers) {
         matcher.with(allNodes, //
-            CoreMatchers.hasItems(neoNodeMatcher));
+            an.iterableOf(Node.class).withItemsMatching(neoNodeMatchers));
+        return this;
+    }
+
+    public NeoDbMatcher containingExactly(final NeoNodeMatcher... neoNodeMatchers) {
+        matcher.with(allNodes, //
+            an.iterableOf(Node.class)
+                .exactly()
+                .withItemsMatching(neoNodeMatchers));
         return this;
     }
 

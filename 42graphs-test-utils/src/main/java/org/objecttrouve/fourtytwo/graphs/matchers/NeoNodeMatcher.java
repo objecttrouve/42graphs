@@ -31,7 +31,6 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.objecttrouve.fourtytwo.graphs.api.Dimension;
 import org.objecttrouve.fourtytwo.graphs.api.Value;
-import org.objecttrouve.testing.matchers.ConvenientMatchers;
 import org.objecttrouve.testing.matchers.fluentatts.Attribute;
 import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
 
@@ -41,7 +40,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.objecttrouve.fourtytwo.graphs.matchers.Matchers.an;
 import static org.objecttrouve.testing.matchers.fluentatts.Attribute.attribute;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
@@ -69,12 +69,15 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
     private static Attribute<Node, Long> nodePropDirectNeighbourCount(final String dimension) {
         return attribute("directNeighbourCount_"+dimension, node -> node.hasProperty("directNeighbourCount_"+dimension) ? (Long) node.getProperty("directNeighbourCount_"+dimension) : 0L);
     }
+    private static Attribute<Node, Long> nodePropLength(final String dimension) {
+        return attribute("length_"+dimension, node -> node.hasProperty("length_"+dimension) ? (Long) node.getProperty("length_"+dimension) : 0L);
+    }
 
     private Long matchedId = null;
     private boolean unique;
 
     public static NeoNodeMatcher aNode() {
-        final FluentAttributeMatcher<Node> m = ConvenientMatchers.a(Node.class);
+        final FluentAttributeMatcher<Node> m = an.instanceOf(Node.class);
         return new NeoNodeMatcher(m);
     }
 
@@ -91,7 +94,7 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
             if (matchedId == null) {
                 matchedId = id;
             } else {
-                assertTrue("Expected node always to be unique and matched only with same ID.", Objects.equals(id, matchedId));
+                assertEquals("Expected node always to be unique and matched only with same ID.", id, (long) matchedId);
             }
         }
         return matches;
@@ -205,6 +208,11 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
 
     public NeoNodeMatcher withPropDirectNeighbourCount(final String dimension, final long expectedCount) {
         matcher.with(nodePropDirectNeighbourCount(dimension), expectedCount);
+        return this;
+    }
+
+    public NeoNodeMatcher withPropLength(final String dimension, final long expected) {
+        matcher.with(nodePropLength(dimension), expected);
         return this;
     }
 }

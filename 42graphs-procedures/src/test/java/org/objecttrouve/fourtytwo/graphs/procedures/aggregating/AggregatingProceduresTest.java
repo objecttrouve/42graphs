@@ -28,9 +28,6 @@ import com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.neo4j.driver.v1.Config;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.harness.junit.Neo4jRule;
@@ -61,7 +58,6 @@ public class AggregatingProceduresTest {
         .withProcedure(AggregatingProcedures.class);
 
     private EmbeddedBackend graph;
-    private Driver driver;
     private GraphDatabaseService db;
 
     @Before
@@ -70,10 +66,6 @@ public class AggregatingProceduresTest {
             () -> neo4j.getGraphDatabaseService(), () -> {
             throw new UnsupportedOperationException("Won't use it here. ");
         });
-        driver = GraphDatabase.driver(
-            neo4j.boltURI(),
-            Config.build().withoutEncryption().toConfig()
-        );
         this.db = neo4j.getGraphDatabaseService();
     }
 
@@ -453,12 +445,184 @@ public class AggregatingProceduresTest {
         )));
     }
 
-    private void callAggregateDirectNeighbourCount(final Dimension parentDimension, final Dimension leafDimension) {
+
+    @Test
+    public void aggregateLength__empty_DB() {
+
+        this.callAggregateLength(sentences, tokens);
+
+        assertThat(db, is(theEmptyGraph()));
+    }
+
+
+    @Test
+    public void aggregateLength__on_node_without_children() {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+        this.callAggregateLength(tokens, dim().withName("None").mock());
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("Word")
+                .withPropLength("None", 0)
+        )));
+    }
+
+    @Test
+    public void aggregateLength__on_node_with_one_child() {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("Word") //
+            ) //
+            .commit();
+
+        this.callAggregateLength(sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("S")
+                .withPropLength("Token", 1)
+        )));
+    }
+
+    @Test
+    public void aggregateLength__on_node_with_three_children() {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("One","word", ".") //
+            ) //
+            .commit();
+
+        this.callAggregateLength(sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("S")
+                .withPropLength("Token", 3)
+        )));
+    }
+
+
+    @Test
+    public void aggregateLength__on_node_with_three_children__in_irrelevant_dimension() {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("LCToken") //
+                    .withLeaves("one","word", ".") //
+            ) //
+            .commit();
+
+        this.callAggregateLength(sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("S")
+                .withPropLength("Token", 0)
+        )));
+    }
+
+    @Test
+    public void aggregateLength__on_node_with_three_target_children__and_others() {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("Token") //
+                    .withLeaves("One","word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("LCToken") //
+                    .withLeaves("one","word", ".") //
+            ) //
+            .commit();
+
+        this.callAggregateLength(sentences, tokens);
+
+        assertThat(db, is(aGraph()
+            .ofOrder(7)
+            .containingExactly(
+                aNode().inDimension("Sentence").withIdentifier("S").withPropLength("Token", 3),
+                aNode().inDimension("Token").withIdentifier("One"),
+                aNode().inDimension("Token").withIdentifier("word"),
+                aNode().inDimension("Token").withIdentifier("."),
+                aNode().inDimension("LCToken").withIdentifier("one"),
+                aNode().inDimension("LCToken").withIdentifier("word"),
+                aNode().inDimension("LCToken").withIdentifier(".")
+            )));
+    }
+
+    @Test
+    public void aggregateLength__on_multiple_nodes() {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S1") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("LCToken") //
+                    .withLeaves("one","word", ".") //
+            ) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("S2") //
+                    .withRootDimension("Sentence") //
+                    .withLeafDimension("LCToken") //
+                    .withLeaves("and","another", "word", ".") //
+            ) //
+            .commit();
+
+        this.callAggregateLength(sentences, dim().withName("LCToken").mock());
+
+        assertThat(db, is(aGraph().containing(
+            aNode().withIdentifier("S1").withPropLength("LCToken", 3),
+            aNode().withIdentifier("S2").withPropLength("LCToken", 4)
+        )));
+    }
+
+    private void callAggregateDirectNeighbourCount(final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
         parameters.put("parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null));
-        parameters.put("leafDimension", ofNullable(leafDimension).map(Dimension::getName).orElse(null));
-        db.execute("CALL " + AggregatingProcedures.procAggregateDirectNeighbourCounts + "({parentDimension}, {leafDimension})", parameters);
+        parameters.put("childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null));
+        db.execute("CALL " + AggregatingProcedures.procAggregateDirectNeighbourCounts + "({parentDimension}, {childDimension})", parameters);
+        tx.success();
+    }
+
+
+    private void callAggregateLength(final Dimension parentDimension, final Dimension childDimension) {
+        final Transaction tx = db.beginTx();
+        final Map<String, Object> parameters = Maps.newHashMap();
+        parameters.put("parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null));
+        parameters.put("childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null));
+        db.execute("CALL " + AggregatingProcedures.procAggregateLength + "({parentDimension}, {childDimension})", parameters);
         tx.success();
     }
 
