@@ -54,7 +54,7 @@ public class ValidatingWriter implements GraphWriter {
             abort();
             throw new IllegalArgumentException("Root item must not be null.");
         }
-        if (sequenceTree.getRootDimension() == null) {
+        if (sequenceTree.getParentDimension() == null) {
             abort();
             throw new IllegalArgumentException("Root dimension must not be null.");
         }

@@ -81,8 +81,8 @@ public class CachingBatchInitializer implements GraphWriter {
   @Override
   public <T, U> GraphWriter add(final SequenceTree<T, U> sequenceTree) {
     logger.trace("Adding {} {}...", SequenceTree.class.getName(), sequenceTree.toString());
-    final Dimension rootDimension = sequenceTree.getRootDimension();
-    final Long parentId = nodes.getUnchecked(NodeKey.key(sequenceTree.getRoot().getIdentifier(), rootDimension.getName()));
+    final Dimension parentDimension = sequenceTree.getParentDimension();
+    final Long parentId = nodes.getUnchecked(NodeKey.key(sequenceTree.getRoot().getIdentifier(), parentDimension.getName()));
     final List<Value<U>> values = sequenceTree.getValues();
     final Dimension childDimension = sequenceTree.getChildDimension();
     for (int i = 0; i < values.size(); i++) {

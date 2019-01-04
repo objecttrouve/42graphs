@@ -96,7 +96,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -116,7 +116,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Some", "words", "come", "with", "other", "words", ".") //
             ) //
@@ -145,21 +145,21 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Some", "words", "come", "with", "other", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("And", "words", "occur", "in", "sentences", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S3") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Words", "are", "case-sensitive", ".") //
             ) //
@@ -194,28 +194,28 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Some", "words", "come", "with", "other", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("UCToken") //
                     .withLeaves("SOME", "WORDS", "COME", "IN", "UPPERCASE", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("And", "words", "occur", "in", "sentences", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S3") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Words", "are", "case-sensitive", ".") //
             ) //
@@ -274,7 +274,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -295,7 +295,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -318,7 +318,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -339,7 +339,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -359,7 +359,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -380,7 +380,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -402,7 +402,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -423,7 +423,7 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -446,14 +446,14 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
@@ -476,21 +476,21 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S3") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("But", "really", "just", "a", "word", ".") //
             ) //
@@ -516,21 +516,21 @@ public class ValueProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("LCSentence") //
+                    .withParentDimension("LCSentence") //
                     .withChildDimension("Token") //
                     .withLeaves("sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //

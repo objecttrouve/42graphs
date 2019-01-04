@@ -28,7 +28,7 @@ import java.util.List;
 
 public interface SequenceTree<T, U> {
     Value<T> getRoot();
-    Dimension getRootDimension();
+    Dimension getParentDimension();
     Dimension getChildDimension();
     List<Value<U>> getValues();
 }

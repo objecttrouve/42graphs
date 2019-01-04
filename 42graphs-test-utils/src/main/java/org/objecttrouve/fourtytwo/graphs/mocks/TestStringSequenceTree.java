@@ -37,7 +37,7 @@ import static java.util.Arrays.asList;
 public class TestStringSequenceTree implements SequenceTree<String, String> {
 
     private String root;
-    private String rootDimension;
+    private String parentDimension;
     private String childDimension;
     private List<String> stringSequence;
 
@@ -58,8 +58,8 @@ public class TestStringSequenceTree implements SequenceTree<String, String> {
         return this;
     }
 
-    public TestStringSequenceTree withRootDimension(final String rootDimension) {
-        this.rootDimension = rootDimension;
+    public TestStringSequenceTree withParentDimension(final String parentDimension) {
+        this.parentDimension = parentDimension;
         return this;
     }
 
@@ -72,9 +72,9 @@ public class TestStringSequenceTree implements SequenceTree<String, String> {
         return this;
     }
 
-    public TestStringSequenceTree(final String root, final String rootDimension, final String childDimension, final String... strings) {
+    public TestStringSequenceTree(final String root, final String parentDimension, final String childDimension, final String... strings) {
         this.root = root;
-        this.rootDimension = rootDimension;
+        this.parentDimension = parentDimension;
         this.childDimension = childDimension;
         this.stringSequence = asList(strings);
     }
@@ -85,8 +85,8 @@ public class TestStringSequenceTree implements SequenceTree<String, String> {
     }
 
     @Override
-    public Dimension getRootDimension() {
-        return rootDimension != null ? () -> rootDimension : null;
+    public Dimension getParentDimension() {
+        return parentDimension != null ? () -> parentDimension : null;
     }
     @Override
     public Dimension getChildDimension() {

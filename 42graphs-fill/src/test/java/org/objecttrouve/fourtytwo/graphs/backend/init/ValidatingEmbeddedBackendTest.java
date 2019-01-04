@@ -66,7 +66,7 @@ public class ValidatingEmbeddedBackendTest {
                     .add( //
                             aStringSequence()//
                                     .withRoot(null) //
-                                    .withRootDimension("not null root dimension") //
+                                    .withParentDimension("not null root dimension") //
                                     .withLeaves("not null leaf") //
                                     .withChildDimension("not null leaf dimension") //
                     );
@@ -81,7 +81,7 @@ public class ValidatingEmbeddedBackendTest {
     }
 
     @Test
-    public void addASequenceTreeWithANullRootDimension() {
+    public void addASequenceTreeWithANullParentDimension() {
 
         final WritingMock writer = WritingMock.ofWriting();
         final BackendMock backend = BackendMock.ofBackend().writing(writer);
@@ -91,7 +91,7 @@ public class ValidatingEmbeddedBackendTest {
                     .add( //
                             aStringSequence()//
                                     .withRoot("not null") //
-                                    .withRootDimension(null) //
+                                    .withParentDimension(null) //
                                     .withLeaves("not null leaf") //
                                     .withChildDimension("not null leaf dimension") //
                     );
@@ -116,7 +116,7 @@ public class ValidatingEmbeddedBackendTest {
                     .add( //
                             aStringSequence()//
                                     .withRoot("not null") //
-                                    .withRootDimension("not null root dimension") //
+                                    .withParentDimension("not null root dimension") //
                                     .withLeaves("not null leaf") //
                                     .withChildDimension(null) //
                     );
@@ -141,7 +141,7 @@ public class ValidatingEmbeddedBackendTest {
                     .add( //
                             aStringSequence()//
                                     .withRoot("not null") //
-                                    .withRootDimension("not null root dimension") //
+                                    .withParentDimension("not null root dimension") //
                                     .withLeafSequence(null) //
                                     .withChildDimension("not null leaf dimension") //
                     );
@@ -165,7 +165,7 @@ public class ValidatingEmbeddedBackendTest {
                 .add( //
                         aStringSequence()//
                                 .withRoot("root") //
-                                .withRootDimension("rootDimension") //
+                                .withParentDimension("parentDimension") //
                                 .withLeaves("l1", "l2", "l3") //
                                 .withChildDimension("childDimension") //
                 );
@@ -173,7 +173,7 @@ public class ValidatingEmbeddedBackendTest {
         writer.verifyAddedSequence(//
                 aSequenceTree(String.class, String.class)//
                         .withRootId("root") //
-                        .withRootDimension("rootDimension") //
+                        .withParentDimension("parentDimension") //
                         .withLeaves("l1", "l2", "l3") //
                         .withChildDimension("childDimension") //
         );
@@ -190,7 +190,7 @@ public class ValidatingEmbeddedBackendTest {
                 .add( //
                         aStringSequence()//
                                 .withRoot("root") //
-                                .withRootDimension("rootDimension") //
+                                .withParentDimension("parentDimension") //
                                 .withLeaves(/* Empty List. */) //
                                 .withChildDimension("childDimension") //
                 );
@@ -198,7 +198,7 @@ public class ValidatingEmbeddedBackendTest {
         writer.verifyAddedSequence(//
                 aSequenceTree(String.class, String.class)//
                         .withRootId("root") //
-                        .withRootDimension("rootDimension") //
+                        .withParentDimension("parentDimension") //
                         .withLeaves(/* Empty List. */) //
                         .withChildDimension("childDimension") //
         );
@@ -215,7 +215,7 @@ public class ValidatingEmbeddedBackendTest {
                 .add( //
                         aStringSequence()//
                                 .withRoot("root") //
-                                .withRootDimension("rootDimension") //
+                                .withParentDimension("parentDimension") //
                                 .withLeaves("l1", "l2", "l3") //
                                 .withChildDimension("childDimension") //
                 );
@@ -233,7 +233,7 @@ public class ValidatingEmbeddedBackendTest {
                 .add( //
                         aStringSequence()//
                                 .withRoot("root") //
-                                .withRootDimension("rootDimension") //
+                                .withParentDimension("parentDimension") //
                                 .withLeaves("l1", "l2", "l3") //
                                 .withChildDimension("childDimension") //
                 ) //
@@ -243,7 +243,7 @@ public class ValidatingEmbeddedBackendTest {
         writer.verifyAddedSequence(//
                 aSequenceTree(String.class, String.class)//
                         .withRootId("root") //
-                        .withRootDimension("rootDimension") //
+                        .withParentDimension("parentDimension") //
                         .withLeaves("l1", "l2", "l3") //
                         .withChildDimension("childDimension") //
         )

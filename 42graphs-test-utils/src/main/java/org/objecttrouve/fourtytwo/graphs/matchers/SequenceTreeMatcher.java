@@ -40,7 +40,7 @@ public class SequenceTreeMatcher<R, V> extends AbstractMatcherBuilder<SequenceTr
 
 
     private final Attribute<SequenceTree<R, V>, Object> identifier = attribute("identifier", st -> st.getRoot().getIdentifier());
-    private final Attribute<SequenceTree<R, V>, String> rootDimensionName = attribute("root dimension name", st -> st.getRootDimension().getName());
+    private final Attribute<SequenceTree<R, V>, String> parentDimensionName = attribute("root dimension name", st -> st.getParentDimension().getName());
     private final Attribute<SequenceTree<R, V>, String> childDimensionName = attribute("leaf dimension name", st -> st.getChildDimension().getName());
     private final Attribute<SequenceTree<R, V>, List<Object>> leaves = attribute("leaves", st -> st.getValues().stream().map(Value::getIdentifier).collect(toList()));
 
@@ -61,8 +61,8 @@ public class SequenceTreeMatcher<R, V> extends AbstractMatcherBuilder<SequenceTr
         return this;
     }
 
-    public SequenceTreeMatcher withRootDimension(final String rootDimension) {
-        matcher.with(rootDimensionName, rootDimension);
+    public SequenceTreeMatcher withParentDimension(final String parentDimension) {
+        matcher.with(parentDimensionName, parentDimension);
         return this;
     }
 

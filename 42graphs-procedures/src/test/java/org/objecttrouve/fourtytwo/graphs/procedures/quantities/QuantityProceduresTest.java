@@ -86,7 +86,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -104,7 +104,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("One", "two", "three") //
             ) //
@@ -122,14 +122,14 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("One", "two", "three") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Num") //
                     .withLeaves("1", "2", "3") //
             ) //
@@ -147,7 +147,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Num") //
                     .withLeaves("1", "2", "3") //
             ) //
@@ -188,7 +188,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -209,7 +209,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
@@ -229,14 +229,14 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
@@ -256,28 +256,28 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("second", "sentence", "with", "words", ".") //
             ) //
@@ -296,21 +296,21 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s") //
-                    .withRootDimension("LCSentence") //
+                    .withParentDimension("LCSentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s") //
-                    .withRootDimension("LCSentence") //
+                    .withParentDimension("LCSentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("three", "words", ".") //
             ) //
@@ -351,7 +351,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -371,7 +371,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
@@ -392,7 +392,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("words", "words", "words") //
             ) //
@@ -412,7 +412,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Words", "words", "words") //
             ) //
@@ -432,14 +432,14 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
@@ -458,7 +458,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -477,7 +477,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -495,7 +495,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -514,7 +514,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -534,28 +534,28 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("second", "sentence", "with", "words", ".") //
             ) //
@@ -575,21 +575,21 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s") //
-                    .withRootDimension("LCSentence") //
+                    .withParentDimension("LCSentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s") //
-                    .withRootDimension("LCSentence") //
+                    .withParentDimension("LCSentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("three", "words", ".") //
             ) //
@@ -636,7 +636,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -657,7 +657,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -679,7 +679,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -700,7 +700,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -720,7 +720,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -741,7 +741,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -762,7 +762,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -783,7 +783,7 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -805,14 +805,14 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
@@ -833,21 +833,21 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S3") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("But", "really", "just", "a", "word", ".") //
             ) //
@@ -869,21 +869,21 @@ public class QuantityProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("LCSentence") //
+                    .withParentDimension("LCSentence") //
                     .withChildDimension("Token") //
                     .withLeaves("sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //

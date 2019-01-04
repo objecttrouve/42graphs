@@ -111,7 +111,7 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("rootid") //
-                    .withRootDimension("rootdim") //
+                    .withParentDimension("rootdim") //
                     .withChildDimension("leaf") //
                     .withLeaves(/* Empty. */) //
             ) //
@@ -137,7 +137,7 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("rootid") //
-                    .withRootDimension("rootdim") //
+                    .withParentDimension("rootdim") //
                     .withChildDimension("leafdim") //
                     .withLeaves("oneleaf") //
             ) //
@@ -176,7 +176,7 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("the root") //
-                    .withRootDimension("root") //
+                    .withParentDimension("root") //
                     .withChildDimension("leaf") //
                     .withLeaves("one", "two", "three") //
             ) //
@@ -236,14 +236,14 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("rootid") //
-                    .withRootDimension("rootdim") //
+                    .withParentDimension("rootdim") //
                     .withChildDimension("leafdim") //
                     .withLeaves("oneleaf") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("rootid") //
-                    .withRootDimension("rootdim") //
+                    .withParentDimension("rootdim") //
                     .withChildDimension("leafdim") //
                     .withLeaves("oneleaf") //
             ) //
@@ -287,7 +287,7 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("rootid") //
-                    .withRootDimension("rootdim") //
+                    .withParentDimension("rootdim") //
                     .withChildDimension("leafdim") //
                     .withLeaves("oneleaf") //
             ) //
@@ -296,7 +296,7 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("rootid") //
-                    .withRootDimension("rootdim") //
+                    .withParentDimension("rootdim") //
                     .withChildDimension("leafdim") //
                     .withLeaves("oneleaf") //
             ) //
@@ -340,14 +340,14 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("s1") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "a", "sentence", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s2") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("That", "was", "really", "the", "truth", "!") //
             ) //
@@ -395,14 +395,14 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("s1") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "a", "sentence", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s2") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "really", "the", "truth", ".") //
             ) //
@@ -453,14 +453,14 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("s1") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "a", "sentence", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s2") //
-                    .withRootDimension("lcsentence") //
+                    .withParentDimension("lcsentence") //
                     .withChildDimension("lctoken") //
                     .withLeaves("that", "was", "really", "the", "truth", "!") //
             ) //
@@ -509,14 +509,14 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("s1") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "a", "sentence", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s1") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("lctoken") //
                     .withLeaves("that", "is", "a", "sentence", ".") //
             ) //
@@ -555,21 +555,21 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("s1") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "a", "sentence", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s2") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "really", "the", "truth", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("doc1") //
-                    .withRootDimension("doc") //
+                    .withParentDimension("doc") //
                     .withChildDimension("sentence") //
                     .withLeaves("s1", "s2") //
             ) //
@@ -633,21 +633,21 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot("s2") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "really", "the", "truth", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("doc1") //
-                    .withRootDimension("doc") //
+                    .withParentDimension("doc") //
                     .withChildDimension("sentence") //
                     .withLeaves("s1", "s2") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s1") //
-                    .withRootDimension("sentence") //
+                    .withParentDimension("sentence") //
                     .withChildDimension("token") //
                     .withLeaves("This", "is", "a", "sentence", ".") //
             ) //
@@ -714,7 +714,7 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot(pid) //
-                    .withRootDimension(dParent) //
+                    .withParentDimension(dParent) //
                     .withChildDimension(dLeaf) //
                     .withLeaves(/* Empty. */) //
             ) //
@@ -743,7 +743,7 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot(pid) //
-                    .withRootDimension(dParent) //
+                    .withParentDimension(dParent) //
                     .withChildDimension(dLeaf) //
                     .withLeaves("child") //
             ) //
@@ -772,7 +772,7 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot(pid) //
-                    .withRootDimension(dParent) //
+                    .withParentDimension(dParent) //
                     .withChildDimension(dLeaf) //
                     .withLeaves("child", "sister", "brother") //
             ) //
@@ -802,14 +802,14 @@ public class EmbeddedBackendTest {
             .add( //
                 aStringSequence()//
                     .withRoot(pid) //
-                    .withRootDimension(dParent) //
+                    .withParentDimension(dParent) //
                     .withChildDimension(dLeaf) //
                     .withLeaves("child", "sister", "brother") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot(pid) //
-                    .withRootDimension(dParent) //
+                    .withParentDimension(dParent) //
                     .withChildDimension(dLeaf2) //
                     .withLeaves("cat") //
             ) //

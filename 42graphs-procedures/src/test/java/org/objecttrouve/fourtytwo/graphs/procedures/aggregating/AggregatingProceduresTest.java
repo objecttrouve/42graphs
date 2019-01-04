@@ -84,7 +84,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -106,7 +106,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("one", "Word") //
             ) //
@@ -128,7 +128,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one") //
             ) //
@@ -150,14 +150,14 @@ public class AggregatingProceduresTest {
             .add(
                 aStringSequence()
                     .withRoot("S")
-                    .withRootDimension("Sentence")
+                    .withParentDimension("Sentence")
                     .withChildDimension("Token")
                     .withLeaves("Word", "one")
             )
             .add(
                 aStringSequence()
                     .withRoot("T")
-                    .withRootDimension("Sentence")
+                    .withParentDimension("Sentence")
                     .withChildDimension("Token")
                     .withLeaves("Word", "two")
             )
@@ -179,14 +179,14 @@ public class AggregatingProceduresTest {
             .add(
                 aStringSequence()
                     .withRoot("S")
-                    .withRootDimension("Sentence")
+                    .withParentDimension("Sentence")
                     .withChildDimension("Token")
                     .withLeaves("one", "Word")
             )
             .add(
                 aStringSequence()
                     .withRoot("T")
-                    .withRootDimension("Sentence")
+                    .withParentDimension("Sentence")
                     .withChildDimension("Token")
                     .withLeaves("the", "Word")
             )
@@ -208,7 +208,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -230,7 +230,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
@@ -252,7 +252,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("my", "Word", "one") //
             ) //
@@ -276,28 +276,28 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("1") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("my", "Word", "one") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("your", "Word", "two") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("3") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("one", "Word", "here") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("4") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("one", "Word", "there") //
             ) //
@@ -320,7 +320,7 @@ public class AggregatingProceduresTest {
             .add(
                 aStringSequence()
                     .withRoot("1")
-                    .withRootDimension("Sentence")
+                    .withParentDimension("Sentence")
                     .withChildDimension("Token")
                     .withLeaves("my", "Word", "one", "your", "Word", "two")
             )
@@ -342,7 +342,7 @@ public class AggregatingProceduresTest {
             .add(
                 aStringSequence()
                     .withRoot("1")
-                    .withRootDimension("Sentence")
+                    .withParentDimension("Sentence")
                     .withChildDimension("Token")
                     .withLeaves("my", "Word", "one", "your", "Word", "two", "my", "Word", "one")
             )
@@ -364,7 +364,7 @@ public class AggregatingProceduresTest {
             .add(
                 aStringSequence()
                     .withRoot("1")
-                    .withRootDimension("Sentence")
+                    .withParentDimension("Sentence")
                     .withChildDimension("Token")
                     .withLeaves("my", "Word", "one", "your", "Word", "two", "one", "Word", "my")
             )
@@ -386,49 +386,49 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("1") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("my", "Word", "one") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("your", "Word", "two") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("3") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Lemma") //
                     .withLeaves("their", "Word", "too") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("4") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("one", "Word", "here") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("5") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("one", "Word", "there") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("6") //
-                    .withRootDimension("Trigram") //
+                    .withParentDimension("Trigram") //
                     .withChildDimension("Lemma") //
                     .withLeaves("their", "Word", "too") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("7") //
-                    .withRootDimension("Trigram") //
+                    .withParentDimension("Trigram") //
                     .withChildDimension("Token") //
                     .withLeaves("their", "Word", "too") //
             ) //
@@ -462,7 +462,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -484,7 +484,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
@@ -506,7 +506,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("One","word", ".") //
             ) //
@@ -529,7 +529,7 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("one","word", ".") //
             ) //
@@ -551,14 +551,14 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("Token") //
                     .withLeaves("One","word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("one","word", ".") //
             ) //
@@ -586,14 +586,14 @@ public class AggregatingProceduresTest {
             .add( //
                 aStringSequence()//
                     .withRoot("S1") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("one","word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
-                    .withRootDimension("Sentence") //
+                    .withParentDimension("Sentence") //
                     .withChildDimension("LCToken") //
                     .withLeaves("and","another", "word", ".") //
             ) //
