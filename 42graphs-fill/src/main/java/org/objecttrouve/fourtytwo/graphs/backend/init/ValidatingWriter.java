@@ -24,8 +24,8 @@
 
 package org.objecttrouve.fourtytwo.graphs.backend.init;
 
-import org.objecttrouve.fourtytwo.graphs.api.SequenceTree;
 import org.objecttrouve.fourtytwo.graphs.api.GraphWriter;
+import org.objecttrouve.fourtytwo.graphs.api.SequenceTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class ValidatingWriter implements GraphWriter {
             abort();
             throw new IllegalArgumentException("Values must not be null. (Empty would be OK.)");
         }
-        if (sequenceTree.getLeafDimension() == null) {
+        if (sequenceTree.getChildDimension() == null) {
             abort();
             throw new IllegalArgumentException("Leaf dimension must not be null.");
         }

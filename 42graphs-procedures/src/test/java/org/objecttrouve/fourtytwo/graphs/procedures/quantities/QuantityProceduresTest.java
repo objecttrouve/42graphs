@@ -37,6 +37,7 @@ import org.neo4j.harness.junit.Neo4jRule;
 import org.objecttrouve.fourtytwo.graphs.api.Dimension;
 import org.objecttrouve.fourtytwo.graphs.api.Value;
 import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
+
 import static java.util.Optional.ofNullable;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -71,7 +72,7 @@ public class QuantityProceduresTest {
     // --- countAllValues ------------------------------
 
     @Test
-    public void countAllValues__empty_graph() throws Throwable {
+    public void countAllValues__empty_graph() {
 
         final StatementResult result = callCountAllValues("SomeDim");
 
@@ -79,14 +80,14 @@ public class QuantityProceduresTest {
     }
 
     @Test
-    public void countAllValues__one_relevant_node() throws Throwable {
+    public void countAllValues__one_relevant_node() {
 
         graph.writer(noInit) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -97,14 +98,14 @@ public class QuantityProceduresTest {
     }
 
     @Test
-    public void countAllValues__three_relevant_nodes() throws Throwable {
+    public void countAllValues__three_relevant_nodes() {
 
         graph.writer(noInit) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("One", "two", "three") //
             ) //
             .commit();
@@ -115,21 +116,21 @@ public class QuantityProceduresTest {
     }
 
     @Test
-    public void countAllValues__three_relevant_nodes__and_three_distractors() throws Throwable {
+    public void countAllValues__three_relevant_nodes__and_three_distractors() {
 
         graph.writer(noInit) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("One", "two", "three") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Num") //
+                    .withChildDimension("Num") //
                     .withLeaves("1", "2", "3") //
             ) //
             .commit();
@@ -140,14 +141,14 @@ public class QuantityProceduresTest {
     }
 
     @Test
-    public void countAllValues__no_relevant_nodes() throws Throwable {
+    public void countAllValues__no_relevant_nodes() {
 
         graph.writer(noInit) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Num") //
+                    .withChildDimension("Num") //
                     .withLeaves("1", "2", "3") //
             ) //
             .commit();
@@ -188,7 +189,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -209,7 +210,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .commit();
@@ -229,14 +230,14 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .commit();
@@ -256,28 +257,28 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("LCToken") //
+                    .withChildDimension("LCToken") //
                     .withLeaves("three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("LCToken") //
+                    .withChildDimension("LCToken") //
                     .withLeaves("second", "sentence", "with", "words", ".") //
             ) //
             .commit();
@@ -296,21 +297,21 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s") //
                     .withRootDimension("LCSentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s") //
                     .withRootDimension("LCSentence") //
-                    .withLeafDimension("LCToken") //
+                    .withChildDimension("LCToken") //
                     .withLeaves("three", "words", ".") //
             ) //
             .commit();
@@ -320,13 +321,13 @@ public class QuantityProceduresTest {
         assertThat(quantity(result), is(3L));
     }
 
-    private StatementResult callCountAllOccurrences(final Dimension parentDimension, final Dimension leafDimension) {
+    private StatementResult callCountAllOccurrences(final Dimension parentDimension, final Dimension childDimension) {
         return driver.session()//
             .run(//
-                "CALL " + procCountAllOccurrences + "({parentDimension}, {leafDimension})", //
+                "CALL " + procCountAllOccurrences + "({parentDimension}, {childDimension})", //
                 parameters(
                     "parentDimension", parentDimension.getName(),
-                    "leafDimension", leafDimension.getName()
+                    "childDimension", childDimension.getName()
                 ));
     }
 
@@ -351,7 +352,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -371,7 +372,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .commit();
@@ -392,7 +393,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("words", "words", "words") //
             ) //
             .commit();
@@ -412,7 +413,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Words", "words", "words") //
             ) //
             .commit();
@@ -432,14 +433,14 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .commit();
@@ -458,7 +459,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -477,7 +478,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -495,7 +496,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -514,7 +515,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -534,28 +535,28 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("LCToken") //
+                    .withChildDimension("LCToken") //
                     .withLeaves("three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("E") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("LCToken") //
+                    .withChildDimension("LCToken") //
                     .withLeaves("second", "sentence", "with", "words", ".") //
             ) //
             .commit();
@@ -575,21 +576,21 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Three", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s") //
                     .withRootDimension("LCSentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Second", "sentence", "with", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("s") //
                     .withRootDimension("LCSentence") //
-                    .withLeafDimension("LCToken") //
+                    .withChildDimension("LCToken") //
                     .withLeaves("three", "words", ".") //
             ) //
             .commit();
@@ -601,14 +602,14 @@ public class QuantityProceduresTest {
     }
 
 
-    private StatementResult callCountAllOccurrences(final Value<String> value, final Dimension parentDimension, final Dimension leafDimension) {
+    private StatementResult callCountAllOccurrences(final Value<String> value, final Dimension parentDimension, final Dimension childDimension) {
         return driver.session()//
             .run(//
-                "CALL " + procCountOccurrences + "({value},{parentDimension}, {leafDimension})", //
+                "CALL " + procCountOccurrences + "({value},{parentDimension}, {childDimension})", //
                 parameters(
                     "value", ofNullable(value).map(Value::getIdentifier).orElse(null),
                     "parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null),
-                    "leafDimension", ofNullable(leafDimension).map(Dimension::getName).orElse(null)
+                    "childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null)
                 ));
     }
 
@@ -636,7 +637,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -657,7 +658,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -679,7 +680,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -700,7 +701,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -712,7 +713,7 @@ public class QuantityProceduresTest {
     }
 
     @Test
-    public void streamNeighbours__null_leafDimension_arg() {
+    public void streamNeighbours__null_childDimension_arg() {
 
         final Dimension sentences = dim().withName("Sentence").mock();
         graph.writer(noInit) //
@@ -720,7 +721,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -741,7 +742,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -762,7 +763,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -783,7 +784,7 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -805,14 +806,14 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
             .commit();
@@ -833,21 +834,21 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S3") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("But", "really", "just", "a", "word", ".") //
             ) //
             .commit();
@@ -869,21 +870,21 @@ public class QuantityProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("LCSentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
             .commit();
@@ -894,14 +895,14 @@ public class QuantityProceduresTest {
         MatcherAssert.assertThat(neighbourCount, is(2L));
     }
 
-    private StatementResult callCountNeighbours(final Value<String> self, final Dimension parentDimension, final Dimension leafDimension, final long vicinity) {
+    private StatementResult callCountNeighbours(final Value<String> self, final Dimension parentDimension, final Dimension childDimension, final long vicinity) {
         return driver.session()//
             .run(//
-                "CALL " + procCountNeighbours + "({self},{parentDimension}, {leafDimension}, {vicinity})", //
+                "CALL " + procCountNeighbours + "({self},{parentDimension}, {childDimension}, {vicinity})", //
                 parameters(
                     "self", ofNullable(self).map(Value::getIdentifier).orElse(null),
                     "parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null),
-                    "leafDimension", ofNullable(leafDimension).map(Dimension::getName).orElse(null),
+                    "childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null),
                     "vicinity", vicinity
                 ));
     }

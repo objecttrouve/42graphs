@@ -32,8 +32,8 @@ import org.objecttrouve.fourtytwo.graphs.mocks.WritingMock;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.objecttrouve.fourtytwo.graphs.mocks.TestStringSequenceTree.aStringSequence;
 import static org.objecttrouve.fourtytwo.graphs.matchers.SequenceTreeMatcher.aSequenceTree;
+import static org.objecttrouve.fourtytwo.graphs.mocks.TestStringSequenceTree.aStringSequence;
 
 public class ValidatingEmbeddedBackendTest {
 
@@ -68,7 +68,7 @@ public class ValidatingEmbeddedBackendTest {
                                     .withRoot(null) //
                                     .withRootDimension("not null root dimension") //
                                     .withLeaves("not null leaf") //
-                                    .withLeafDimension("not null leaf dimension") //
+                                    .withChildDimension("not null leaf dimension") //
                     );
 
         } catch (final IllegalArgumentException e) {
@@ -93,7 +93,7 @@ public class ValidatingEmbeddedBackendTest {
                                     .withRoot("not null") //
                                     .withRootDimension(null) //
                                     .withLeaves("not null leaf") //
-                                    .withLeafDimension("not null leaf dimension") //
+                                    .withChildDimension("not null leaf dimension") //
                     );
 
         } catch (final IllegalArgumentException e) {
@@ -106,7 +106,7 @@ public class ValidatingEmbeddedBackendTest {
     }
 
     @Test
-    public void addASequenceTreeWithANullLeafDimensionWhenThereAreLeafs() {
+    public void addASequenceTreeWithANullChildDimensionWhenThereAreLeafs() {
 
         final WritingMock writer = WritingMock.ofWriting();
         final BackendMock backend = BackendMock.ofBackend().writing(writer);
@@ -118,7 +118,7 @@ public class ValidatingEmbeddedBackendTest {
                                     .withRoot("not null") //
                                     .withRootDimension("not null root dimension") //
                                     .withLeaves("not null leaf") //
-                                    .withLeafDimension(null) //
+                                    .withChildDimension(null) //
                     );
 
         } catch (final IllegalArgumentException e) {
@@ -143,7 +143,7 @@ public class ValidatingEmbeddedBackendTest {
                                     .withRoot("not null") //
                                     .withRootDimension("not null root dimension") //
                                     .withLeafSequence(null) //
-                                    .withLeafDimension("not null leaf dimension") //
+                                    .withChildDimension("not null leaf dimension") //
                     );
 
         } catch (final IllegalArgumentException e) {
@@ -167,7 +167,7 @@ public class ValidatingEmbeddedBackendTest {
                                 .withRoot("root") //
                                 .withRootDimension("rootDimension") //
                                 .withLeaves("l1", "l2", "l3") //
-                                .withLeafDimension("leafDimension") //
+                                .withChildDimension("childDimension") //
                 );
 
         writer.verifyAddedSequence(//
@@ -175,7 +175,7 @@ public class ValidatingEmbeddedBackendTest {
                         .withRootId("root") //
                         .withRootDimension("rootDimension") //
                         .withLeaves("l1", "l2", "l3") //
-                        .withLeafDimension("leafDimension") //
+                        .withChildDimension("childDimension") //
         );
 
     }
@@ -192,7 +192,7 @@ public class ValidatingEmbeddedBackendTest {
                                 .withRoot("root") //
                                 .withRootDimension("rootDimension") //
                                 .withLeaves(/* Empty List. */) //
-                                .withLeafDimension("leafDimension") //
+                                .withChildDimension("childDimension") //
                 );
 
         writer.verifyAddedSequence(//
@@ -200,7 +200,7 @@ public class ValidatingEmbeddedBackendTest {
                         .withRootId("root") //
                         .withRootDimension("rootDimension") //
                         .withLeaves(/* Empty List. */) //
-                        .withLeafDimension("leafDimension") //
+                        .withChildDimension("childDimension") //
         );
 
     }
@@ -217,7 +217,7 @@ public class ValidatingEmbeddedBackendTest {
                                 .withRoot("root") //
                                 .withRootDimension("rootDimension") //
                                 .withLeaves("l1", "l2", "l3") //
-                                .withLeafDimension("leafDimension") //
+                                .withChildDimension("childDimension") //
                 );
 
         assertThat(builder, notNullValue());
@@ -235,7 +235,7 @@ public class ValidatingEmbeddedBackendTest {
                                 .withRoot("root") //
                                 .withRootDimension("rootDimension") //
                                 .withLeaves("l1", "l2", "l3") //
-                                .withLeafDimension("leafDimension") //
+                                .withChildDimension("childDimension") //
                 ) //
                 .commit();
 
@@ -245,7 +245,7 @@ public class ValidatingEmbeddedBackendTest {
                         .withRootId("root") //
                         .withRootDimension("rootDimension") //
                         .withLeaves("l1", "l2", "l3") //
-                        .withLeafDimension("leafDimension") //
+                        .withChildDimension("childDimension") //
         )
         .verifyCommitted();
 

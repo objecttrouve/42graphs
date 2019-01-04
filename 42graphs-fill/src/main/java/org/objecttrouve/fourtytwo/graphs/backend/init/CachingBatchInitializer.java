@@ -31,9 +31,9 @@ import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.objecttrouve.fourtytwo.graphs.api.Dimension;
+import org.objecttrouve.fourtytwo.graphs.api.GraphWriter;
 import org.objecttrouve.fourtytwo.graphs.api.SequenceTree;
 import org.objecttrouve.fourtytwo.graphs.api.Value;
-import org.objecttrouve.fourtytwo.graphs.api.GraphWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class CachingBatchInitializer implements GraphWriter {
 
   private final BatchInserter init;
 
-  LoadingCache<NodeKey, Long> nodes = CacheBuilder.newBuilder()
+  private LoadingCache<NodeKey, Long> nodes = CacheBuilder.newBuilder()
       .build(
           new CacheLoader<NodeKey, Long>() {
             public Long load(final NodeKey key){
@@ -57,7 +57,7 @@ public class CachingBatchInitializer implements GraphWriter {
               return init.createNode(props, Label.label(key.getDimension()));
             }
           });
-  LoadingCache<RelationKey, Long> relations = CacheBuilder.newBuilder()
+  private LoadingCache<RelationKey, Long> relations = CacheBuilder.newBuilder()
       .build(
           new CacheLoader<RelationKey, Long>() {
             public Long load(final RelationKey key){
@@ -84,13 +84,13 @@ public class CachingBatchInitializer implements GraphWriter {
     final Dimension rootDimension = sequenceTree.getRootDimension();
     final Long parentId = nodes.getUnchecked(NodeKey.key(sequenceTree.getRoot().getIdentifier(), rootDimension.getName()));
     final List<Value<U>> values = sequenceTree.getValues();
-    final Dimension leafDimension = sequenceTree.getLeafDimension();
+    final Dimension childDimension = sequenceTree.getChildDimension();
     for (int i = 0; i < values.size(); i++) {
       final Value<U> child = values.get(i);
-      final Long childId = nodes.getUnchecked(NodeKey.key(child.getIdentifier(), leafDimension.getName()));
-      relations.getUnchecked(RelationKey.key(childId, parentId, leafDimension.getName(), i));
+      final Long childId = nodes.getUnchecked(NodeKey.key(child.getIdentifier(), childDimension.getName()));
+      relations.getUnchecked(RelationKey.key(childId, parentId, childDimension.getName(), i));
     }
-    init.setNodeProperty(parentId, leafDimension.childrenSizeKey(), values.size());
+    init.setNodeProperty(parentId, childDimension.childrenSizeKey(), values.size());
     return this;
   }
 

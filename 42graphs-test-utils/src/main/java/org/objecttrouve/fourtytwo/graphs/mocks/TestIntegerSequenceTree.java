@@ -38,14 +38,14 @@ public class TestIntegerSequenceTree implements SequenceTree<Integer, Integer> {
 
     private Integer root;
     private String rootDimension;
-    private String leafDimension;
+    private String childDimension;
     private List<Integer> stringSequence;
 
     public static TestIntegerSequenceTree anIntegerSequence() {
         return new TestIntegerSequenceTree();
     }
 
-    public TestIntegerSequenceTree(){
+    private TestIntegerSequenceTree(){
     }
 
     public TestIntegerSequenceTree withRoot(final Integer root){
@@ -53,8 +53,8 @@ public class TestIntegerSequenceTree implements SequenceTree<Integer, Integer> {
         return this;
     }
 
-    public TestIntegerSequenceTree withLeafDimension(final String leafDimension) {
-        this.leafDimension = leafDimension;
+    public TestIntegerSequenceTree withChildDimension(final String childDimension) {
+        this.childDimension = childDimension;
         return this;
     }
 
@@ -67,15 +67,15 @@ public class TestIntegerSequenceTree implements SequenceTree<Integer, Integer> {
             return withLeafSequence(Arrays.asList(stringSequence));
     }
 
-    public TestIntegerSequenceTree withLeafSequence(final List<Integer> stringSequence) {
+    private TestIntegerSequenceTree withLeafSequence(final List<Integer> stringSequence) {
         this.stringSequence = stringSequence;
         return this;
     }
 
-    public TestIntegerSequenceTree(final Integer root, final String rootDimension, final String leafDimension, final Integer... strings) {
+    public TestIntegerSequenceTree(final Integer root, final String rootDimension, final String childDimension, final Integer... strings) {
         this.root = root;
         this.rootDimension = rootDimension;
-        this.leafDimension = leafDimension;
+        this.childDimension = childDimension;
         this.stringSequence = asList(strings);
     }
 
@@ -89,8 +89,8 @@ public class TestIntegerSequenceTree implements SequenceTree<Integer, Integer> {
         return rootDimension != null ? () -> rootDimension : null;
     }
     @Override
-    public Dimension getLeafDimension() {
-        return leafDimension != null ? () -> leafDimension : null ;
+    public Dimension getChildDimension() {
+        return childDimension != null ? () -> childDimension : null ;
     }
 
     @Override

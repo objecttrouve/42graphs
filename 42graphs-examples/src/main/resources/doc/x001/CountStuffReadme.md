@@ -16,13 +16,13 @@ What's the size of the [vocabulary](../common/Glossary.md#vocabulary) in our cor
 
 And how many [tokens](../common/Glossary.md#token) did we have in the original text when we also count duplicates?
 
-    MATCH (leafDimension:Token)-[occursIn]->(parentDimension:Sentence) RETURN count(occursIn)
+    MATCH (childDimension:Token)-[occursIn]->(parentDimension:Sentence) RETURN count(occursIn)
     
 ### Number of Token Occurrences
 
 How many times does the word "Freude" occur?
 
-    MATCH (leafDimension:Token{identifier:'Freude'})-[occursIn]->(parentDimension:Sentence) RETURN count(occursIn)
+    MATCH (childDimension:Token{identifier:'Freude'})-[occursIn]->(parentDimension:Sentence) RETURN count(occursIn)
 
 
 Programmatically

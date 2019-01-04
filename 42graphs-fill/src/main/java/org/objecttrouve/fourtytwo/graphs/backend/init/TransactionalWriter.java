@@ -65,16 +65,16 @@ public class TransactionalWriter implements GraphWriter {
         final Dimension rootDimension = sequenceTree.getRootDimension();
         final String rootDimensionName = rootDimension.getName();
         final Map<String, Object> parentProps = Maps.newHashMap();
-        final Dimension leafDimension = sequenceTree.getLeafDimension();
+        final Dimension childDimension = sequenceTree.getChildDimension();
         final List<Value<U>> values = sequenceTree.getValues();
-        parentProps.put(leafDimension.childrenSizeKey(), values.size());
+        parentProps.put(childDimension.childrenSizeKey(), values.size());
         addNode(parent.getIdentifier(), rootDimensionName, parentProps);
         for (int i = 0; i < values.size(); i++) {
             final Value<U> child = values.get(i);
-            addNode(child.getIdentifier(), leafDimension.getName(), Maps.newHashMap());
+            addNode(child.getIdentifier(), childDimension.getName(), Maps.newHashMap());
             addRelation(//
                 child.getIdentifier(), //
-                leafDimension.getName(),//
+                childDimension.getName(),//
                 parent.getIdentifier(), //
                 rootDimensionName, //
                 i//

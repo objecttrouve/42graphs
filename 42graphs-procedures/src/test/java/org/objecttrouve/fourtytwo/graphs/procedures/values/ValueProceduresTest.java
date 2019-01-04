@@ -97,7 +97,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -117,7 +117,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Some", "words", "come", "with", "other", "words", ".") //
             ) //
             .commit();
@@ -146,21 +146,21 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Some", "words", "come", "with", "other", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("And", "words", "occur", "in", "sentences", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S3") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Words", "are", "case-sensitive", ".") //
             ) //
             .commit();
@@ -195,28 +195,28 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Some", "words", "come", "with", "other", "words", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("UCToken") //
+                    .withChildDimension("UCToken") //
                     .withLeaves("SOME", "WORDS", "COME", "IN", "UPPERCASE", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("And", "words", "occur", "in", "sentences", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S3") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Words", "are", "case-sensitive", ".") //
             ) //
             .commit();
@@ -275,7 +275,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word") //
             ) //
             .commit();
@@ -296,7 +296,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -319,7 +319,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -340,7 +340,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -352,7 +352,7 @@ public class ValueProceduresTest {
     }
 
     @Test
-    public void streamNeighbours__null_leafDimension_arg() {
+    public void streamNeighbours__null_childDimension_arg() {
 
         final Dimension sentences = dim().withName("Sentence").mock();
         graph.writer(noInit) //
@@ -360,7 +360,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -381,7 +381,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -403,7 +403,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -424,7 +424,7 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Word", "one", ".") //
             ) //
             .commit();
@@ -447,14 +447,14 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
             .commit();
@@ -477,21 +477,21 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S3") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("But", "really", "just", "a", "word", ".") //
             ) //
             .commit();
@@ -517,21 +517,21 @@ public class ValueProceduresTest {
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S") //
                     .withRootDimension("LCSentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("sentence", "with", "one", "word", ".") //
             ) //
             .add( //
                 aStringSequence()//
                     .withRoot("S2") //
                     .withRootDimension("Sentence") //
-                    .withLeafDimension("Token") //
+                    .withChildDimension("Token") //
                     .withLeaves("Not", "really", "just", "one", "word", ".") //
             ) //
             .commit();
@@ -545,13 +545,13 @@ public class ValueProceduresTest {
     }
 
 
-    private StatementResult callRetrieveNeighbors(final Value<String> self, final Dimension parentDimension, final Dimension leafDimension, final long vicinity) {
+    private StatementResult callRetrieveNeighbors(final Value<String> self, final Dimension parentDimension, final Dimension childDimension, final long vicinity) {
         return driver.session()//
             .run(//
-                "CALL " + ValueProcedures.procRetrieveNeighbours + "({self},{parentDimension},{leafDimension},{vicinity})", //
+                "CALL " + ValueProcedures.procRetrieveNeighbours + "({self},{parentDimension},{childDimension},{vicinity})", //
                 parameters(
                     "self", ofNullable(self).map(Value::getIdentifier).orElse(null),
-                    "leafDimension", ofNullable(leafDimension).map(Dimension::getName).orElse(null),
+                    "childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null),
                     "parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null),
                     "vicinity", vicinity
                 ));

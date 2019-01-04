@@ -36,7 +36,7 @@ public class NeoRelationMatcher extends AbstractMatcherBuilder<Relationship> {
 
     private static final Attribute<Relationship, Node> endNode = Attribute.attribute("end node", Relationship::getEndNode);
     private static final Attribute<Relationship, Node> startNode = Attribute.attribute("start node", Relationship::getStartNode);
-    private static final Attribute<Relationship, String> leafDimension = Attribute.attribute("leaf dimension", r -> r.getType().name());
+    private static final Attribute<Relationship, String> childDimension = Attribute.attribute("leaf dimension", r -> r.getType().name());
     private static final Attribute<Relationship, Object> positionKey = Attribute.attribute("position key", r -> r.getProperty(Dimension.positionKey));
 
 
@@ -60,7 +60,7 @@ public class NeoRelationMatcher extends AbstractMatcherBuilder<Relationship> {
 
 
     public NeoRelationMatcher inDimension(final String leafdim) {
-        matcher.with(leafDimension, leafdim);
+        matcher.with(childDimension, leafdim);
         return this;
     }
 

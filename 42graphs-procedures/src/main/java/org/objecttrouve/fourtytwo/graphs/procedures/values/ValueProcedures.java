@@ -66,12 +66,10 @@ public class ValueProcedures {
         }
 
         String str(final Object... snippets) {
-            //noinspection ConfusingArgumentToVarargsMethod
             return format(template, snippets);
         }
     }
 
-    @SuppressWarnings("WeakerAccess")
     @Context
     public GraphDatabaseService db;
     @SuppressWarnings("WeakerAccess")
@@ -95,7 +93,7 @@ public class ValueProcedures {
     public Stream<StringValueRecord> retrieveAllNeighbours(
         @Name("self") final String self,
         @Name("parentDimension") final String parentDimension,
-        @Name("leafDimension") final String leafDimension,
+        @Name("childDimension") final String childDimension,
         @Name("vicinity") final long vicinity
     ) {
         if (StringUtils.isBlank(self)) {
@@ -106,11 +104,11 @@ public class ValueProcedures {
             log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
             return empty();
         }
-        if (StringUtils.isBlank(leafDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'leafDimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
+        if (StringUtils.isBlank(childDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
             return empty();
         }
-        return execute(Query.retrieveNeighbours, leafDimension, self, parentDimension, leafDimension, vicinity);
+        return execute(Query.retrieveNeighbours, childDimension, self, parentDimension, childDimension, vicinity);
     }
 
     private Stream<StringValueRecord> execute(final Query q, final Object... args) {

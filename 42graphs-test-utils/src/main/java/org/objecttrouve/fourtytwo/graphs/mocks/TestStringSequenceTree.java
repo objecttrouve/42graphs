@@ -38,14 +38,14 @@ public class TestStringSequenceTree implements SequenceTree<String, String> {
 
     private String root;
     private String rootDimension;
-    private String leafDimension;
+    private String childDimension;
     private List<String> stringSequence;
 
     public static TestStringSequenceTree aStringSequence() {
         return new TestStringSequenceTree();
     }
 
-    public TestStringSequenceTree(){
+    private TestStringSequenceTree(){
     }
 
     public TestStringSequenceTree withRoot(final String root){
@@ -53,8 +53,8 @@ public class TestStringSequenceTree implements SequenceTree<String, String> {
         return this;
     }
 
-    public TestStringSequenceTree withLeafDimension(final String leafDimension) {
-        this.leafDimension = leafDimension;
+    public TestStringSequenceTree withChildDimension(final String childDimension) {
+        this.childDimension = childDimension;
         return this;
     }
 
@@ -72,10 +72,10 @@ public class TestStringSequenceTree implements SequenceTree<String, String> {
         return this;
     }
 
-    public TestStringSequenceTree(final String root, final String rootDimension, final String leafDimension, final String... strings) {
+    public TestStringSequenceTree(final String root, final String rootDimension, final String childDimension, final String... strings) {
         this.root = root;
         this.rootDimension = rootDimension;
-        this.leafDimension = leafDimension;
+        this.childDimension = childDimension;
         this.stringSequence = asList(strings);
     }
 
@@ -89,8 +89,8 @@ public class TestStringSequenceTree implements SequenceTree<String, String> {
         return rootDimension != null ? () -> rootDimension : null;
     }
     @Override
-    public Dimension getLeafDimension() {
-        return leafDimension != null ? () -> leafDimension : null ;
+    public Dimension getChildDimension() {
+        return childDimension != null ? () -> childDimension : null ;
     }
 
     @Override

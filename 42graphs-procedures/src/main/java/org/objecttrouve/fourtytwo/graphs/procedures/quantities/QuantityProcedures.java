@@ -32,10 +32,11 @@ import org.neo4j.procedure.Context;
 import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
+
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
 
-import static java.lang.String.*;
+import static java.lang.String.format;
 import static java.util.stream.Stream.empty;
 import static org.neo4j.procedure.Mode.READ;
 
@@ -66,14 +67,12 @@ public class QuantityProcedures {
         }
 
         String str(final Object... snippets) {
-            //noinspection ConfusingArgumentToVarargsMethod
             return format(template, snippets);
         }
 
 
     }
 
-    @SuppressWarnings("WeakerAccess")
     @Context
     public GraphDatabaseService db;
     @SuppressWarnings("WeakerAccess")
@@ -96,17 +95,17 @@ public class QuantityProcedures {
     @Description("Counts all value occurrences in the given leaf dimension with the given parent dimension.")
     public Stream<LongQuantityRecord> countAllOccurrences(
         @Name("parentDimension") final String parentDimensionName,
-        @Name("leafDimension")final String leafDimensionName
+        @Name("childDimension")final String childDimensionName
     ) {
         if (StringUtils.isBlank(parentDimensionName)) {
             log.warn("Procedure '%s' called with null or empty 'parentDimensionName' parameter. Won't work.", procCountAllOccurrences);
             return empty();
         }
-        if (StringUtils.isBlank(leafDimensionName)) {
-            log.warn("Procedure '%s' called with null or empty 'leafDimensionName' parameter. Won't work.", procCountAllOccurrences);
+        if (StringUtils.isBlank(childDimensionName)) {
+            log.warn("Procedure '%s' called with null or empty 'childDimensionName' parameter. Won't work.", procCountAllOccurrences);
             return empty();
         }
-        return execute(Query.countAllOccurrences, leafDimensionName, parentDimensionName);
+        return execute(Query.countAllOccurrences, childDimensionName, parentDimensionName);
     }
 
 
@@ -116,7 +115,7 @@ public class QuantityProcedures {
     public Stream<LongQuantityRecord> countOccurrences(
         @Name("value") final String value,
         @Name("parentDimension") final String parentDimensionName,
-        @Name("leafDimension")final String leafDimensionName
+        @Name("childDimension")final String childDimensionName
 
     ){
         if (StringUtils.isBlank(value)) {
@@ -127,11 +126,11 @@ public class QuantityProcedures {
             log.warn("Procedure '%s' called with null or empty 'parentDimensionName' parameter. Won't work.", procCountOccurrences);
             return empty();
         }
-        if (StringUtils.isBlank(leafDimensionName)) {
-            log.warn("Procedure '%s' called with null or empty 'leafDimensionName' parameter. Won't work.", procCountOccurrences);
+        if (StringUtils.isBlank(childDimensionName)) {
+            log.warn("Procedure '%s' called with null or empty 'childDimensionName' parameter. Won't work.", procCountOccurrences);
             return empty();
         }
-        return execute(Query.countOccurrences, leafDimensionName, value, parentDimensionName);
+        return execute(Query.countOccurrences, childDimensionName, value, parentDimensionName);
 
     }
 
@@ -141,7 +140,7 @@ public class QuantityProcedures {
     public Stream<LongQuantityRecord> retrieveAllNeighbours(
         @Name("self") final String self,
         @Name("parentDimension") final String parentDimension,
-        @Name("leafDimension") final String leafDimension,
+        @Name("childDimension") final String childDimension,
         @Name("vicinity") final long vicinity
     ) {
         if (StringUtils.isBlank(self)) {
@@ -152,11 +151,11 @@ public class QuantityProcedures {
             log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't return anything meaningful.", procCountNeighbours);
             return empty();
         }
-        if (StringUtils.isBlank(leafDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'leafDimension' parameter. Won't return anything meaningful.", procCountNeighbours);
+        if (StringUtils.isBlank(childDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't return anything meaningful.", procCountNeighbours);
             return empty();
         }
-        return execute(Query.countNeighbours, leafDimension, self, parentDimension, leafDimension, vicinity);
+        return execute(Query.countNeighbours, childDimension, self, parentDimension, childDimension, vicinity);
     }
 
 
