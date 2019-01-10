@@ -29,7 +29,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.objecttrouve.fourtytwo.graphs.api.Dimension;
 import org.objecttrouve.fourtytwo.graphs.api.Value;
 import org.objecttrouve.testing.matchers.fluentatts.Attribute;
 import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
@@ -51,13 +50,6 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
     private static final Function<String, Attribute<Node, Boolean>> nodeDimension = (labelName) -> attribute("dimension '" + labelName + "'", node -> hasLabel(labelName, node));
     private static final Function<Direction, Attribute<Node, Integer>> nodeDegree = (direction) -> attribute("degree", node -> node.getDegree(direction));
     private final Function<String, Attribute<Node, Boolean>> nodeId = (id) -> attribute("id '" + id + "'", node -> hasIdProperty(id, node));
-    private final Function<Dimension, Attribute<Node, Object>> nodeNrOfChildrenInDimension = (dim) -> attribute("children in dimension '" + dim.getName() + "'", node -> {
-        final Object val = node.getProperty(dim.childrenSizeKey(), 0);
-        if (val instanceof Integer) {
-            return val;
-        }
-        return ((Long) val).intValue();
-    });
 
     private static final Attribute<Node, Iterable<Relationship>> nodeRelations = attribute("relations", Node::getRelationships);
     private final Attribute<Node, Iterable<Node>> nodeRelatedNodes = attribute("related nodes", this::getRelatedNodes);
@@ -115,10 +107,6 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
         return this;
     }
 
-    public NeoNodeMatcher withNrOfChildrenProperty(final Dimension dim, final int nrOfChildren) {
-        matcher.with(nodeNrOfChildrenInDimension.apply(dim), nrOfChildren);
-        return this;
-    }
 
     public NeoNodeMatcher with(final NeoRelationMatcher... relationMatchers) {
         matcher.with(nodeRelations, CoreMatchers.hasItems(relationMatchers));

@@ -47,7 +47,7 @@ public class CachingBatchInitializer implements GraphWriter {
 
   private final BatchInserter init;
 
-  private LoadingCache<NodeKey, Long> nodes = CacheBuilder.newBuilder()
+  private final LoadingCache<NodeKey, Long> nodes = CacheBuilder.newBuilder()
       .build(
           new CacheLoader<NodeKey, Long>() {
             public Long load(final NodeKey key){
@@ -57,7 +57,7 @@ public class CachingBatchInitializer implements GraphWriter {
               return init.createNode(props, Label.label(key.getDimension()));
             }
           });
-  private LoadingCache<RelationKey, Long> relations = CacheBuilder.newBuilder()
+  private final LoadingCache<RelationKey, Long> relations = CacheBuilder.newBuilder()
       .build(
           new CacheLoader<RelationKey, Long>() {
             public Long load(final RelationKey key){
@@ -90,7 +90,6 @@ public class CachingBatchInitializer implements GraphWriter {
       final Long childId = nodes.getUnchecked(NodeKey.key(child.getIdentifier(), childDimension.getName()));
       relations.getUnchecked(RelationKey.key(childId, parentId, childDimension.getName(), i));
     }
-    init.setNodeProperty(parentId, childDimension.childrenSizeKey(), values.size());
     return this;
   }
 

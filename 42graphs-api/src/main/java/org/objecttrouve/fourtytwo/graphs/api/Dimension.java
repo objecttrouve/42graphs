@@ -27,7 +27,4 @@ package org.objecttrouve.fourtytwo.graphs.api;
 public interface Dimension {
     String positionKey = "position";
     String getName();
-    default String childrenSizeKey(){
-        return "nrChildren_" + getName();
-    }
 }
