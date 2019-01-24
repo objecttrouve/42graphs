@@ -64,6 +64,15 @@ public class AggregatingProcedures {
         " SET grandParent.longest_%s_%s = longest " +
         "";
 
+    @SuppressWarnings("WeakerAccess")
+    public static final String procAggregateMaxLongest = "org.objecttrouve.fourtytwo.aggregateMaxLongest";
+
+    private static final String maxLongestXTemplate = "" +
+        "MATCH (c:%s)-->(p:%s) " +
+        " WITH p AS parent, max(c.longest_%s_%s) AS longest " +
+        " SET parent.longest_%s_%s = longest " +
+        "";
+
     @Context
     public GraphDatabaseService db;
     @SuppressWarnings("WeakerAccess")
@@ -125,6 +134,27 @@ public class AggregatingProcedures {
             return;
         }
         final String query = String.format(longestXTemplate,  parentDimension, grandParentDimension, childDimension, parentDimension, childDimension);
+        db.execute(query);
+    }
+
+    @SuppressWarnings("unused")
+    @Procedure(name = procAggregateMaxLongest, mode = WRITE)
+    @Description("Propagates max longest to the parent node.")
+    public void aggregateMaxLongest(
+        @Name("parentDimension") final String parentDimension,
+        @Name("childDimension") final String childDimension,
+        @Name("propagatedParentDimension") final String propagatedParentDimension,
+        @Name("propagatedChildDimension") final String propagatedChildDimension
+    ) {
+        if (StringUtils.isBlank(parentDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
+            return;
+        }
+        if (StringUtils.isBlank(childDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
+            return;
+        }
+        final String query = String.format(maxLongestXTemplate,  childDimension, parentDimension, propagatedParentDimension, propagatedChildDimension, propagatedParentDimension, propagatedChildDimension);
         db.execute(query);
     }
 

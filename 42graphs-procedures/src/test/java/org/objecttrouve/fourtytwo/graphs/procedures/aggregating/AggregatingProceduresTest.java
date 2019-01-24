@@ -53,6 +53,7 @@ public class AggregatingProceduresTest {
     private static final Dimension tokens = dim().withName("Token").mock();
     private static final Dimension sentences = dim().withName("Sentence").mock();
     private static final Dimension documents = dim().withName("Document").mock();
+    private static final Dimension corpus = dim().withName("Corpus").mock();
 
     @ClassRule
     public static Neo4jRule neo4j = new Neo4jRule()
@@ -64,11 +65,11 @@ public class AggregatingProceduresTest {
 
     @BeforeClass
     public static void setupStatic() {
+        db = neo4j.getGraphDatabaseService();
         graph = new EmbeddedBackend(//
-            () -> neo4j.getGraphDatabaseService(), () -> {
+            () -> db, () -> {
             throw new UnsupportedOperationException("Won't use it here. ");
         });
-        db = neo4j.getGraphDatabaseService();
     }
 
     @Before
@@ -920,11 +921,171 @@ public class AggregatingProceduresTest {
     }
 
 
+    @Test
+    public void aggregateMaxLongest__only_one_longest_to_select() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("Tales")
+                    .withParentDimension("Corpus")
+                    .withChildDimension("Document")
+                    .withLeaves("Fairy")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("Fairy") //
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Once")
+            )
+
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+        this.callAggregateLongest(documents, sentences, tokens);
+
+        this.callAggregateMaxLongest(corpus, documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("Tales")
+                .withPropLongest("Sentence", "Token", 1)
+        )));
+    }
+
+
+    @Test
+    public void aggregateMaxLongest__multiple_longest_to_aggregate() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("Tales")
+                    .withParentDimension("Corpus")
+                    .withChildDimension("Document")
+                    .withLeaves("Fairy", "Fairy Tale")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("Fairy") //
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Once")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("Fairy Tale") //
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S2")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S2")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Once", "upon", "a", "time", "...")
+            )
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+        this.callAggregateLongest(documents, sentences, tokens);
+
+        this.callAggregateMaxLongest(corpus, documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("Tales")
+                .withPropLongest("Sentence", "Token", 5)
+        )));
+    }
+
+
+    @Test
+    public void aggregateMaxLongest__multiple_longest_to_aggregate__with_distractor() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("Tales")
+                    .withParentDimension("Corpus")
+                    .withChildDimension("Document")
+                    .withLeaves("Fairy", "Fairy Tale", "Fair Trade")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("Fairy") //
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Once")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("Fairy Tale") //
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S2")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S2")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Once", "upon", "a", "time", "...")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("Fair Trade") //
+                    .withParentDimension("Illusion")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S3")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S3")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("After", "the", "apocalypse", "...")
+            )
+            .commit();
+
+        this.callAggregateLength(sentences, tokens);
+        this.callAggregateLongest(documents, sentences, tokens);
+
+        this.callAggregateMaxLongest(corpus, documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("Tales")
+                .withPropLongest("Sentence", "Token", 5)
+        )));
+    }
+
     private void callAggregateDirectNeighbourCount(final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
-        parameters.put("parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null));
-        parameters.put("childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null));
+        parameters.put("parentDimension", str(parentDimension));
+        parameters.put("childDimension", str(childDimension));
         db.execute("CALL " + AggregatingProcedures.procAggregateDirectNeighbourCounts + "({parentDimension}, {childDimension})", parameters);
         tx.success();
     }
@@ -932,8 +1093,8 @@ public class AggregatingProceduresTest {
     private void callAggregateLength(final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
-        parameters.put("parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null));
-        parameters.put("childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null));
+        parameters.put("parentDimension", str(parentDimension));
+        parameters.put("childDimension", str(childDimension));
         db.execute("CALL " + AggregatingProcedures.procAggregateLength + "({parentDimension}, {childDimension})", parameters);
         tx.success();
     }
@@ -942,11 +1103,35 @@ public class AggregatingProceduresTest {
     private void callAggregateLongest(final Dimension grandParentDimension, final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
-        parameters.put("grandParentDimension", ofNullable(grandParentDimension).map(Dimension::getName).orElse(null));
-        parameters.put("parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null));
-        parameters.put("childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null));
+        parameters.put("grandParentDimension", str(grandParentDimension));
+        parameters.put("parentDimension", str(parentDimension));
+        parameters.put("childDimension", str(childDimension));
         db.execute("CALL " + AggregatingProcedures.procAggregateLongest + "({grandParentDimension}, {parentDimension}, {childDimension})", parameters);
         tx.success();
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void callAggregateMaxLongest(
+        final Dimension parentDimension,
+        final Dimension childDimension,
+        final Dimension propagatedParentDimension,
+        final Dimension propagatedChildDimension
+    ) {
+        final Transaction tx = db.beginTx();
+        final Map<String, Object> parameters = Maps.newHashMap();
+        parameters.put("parentDimension", str(parentDimension));
+        parameters.put("childDimension", str(childDimension));
+
+        parameters.put("propagatedParentDimension", str(propagatedParentDimension));
+        parameters.put("propagatedChildDimension", str(propagatedChildDimension));
+
+
+        db.execute("CALL " + AggregatingProcedures.procAggregateMaxLongest + "({parentDimension}, {childDimension}, {propagatedParentDimension}, {propagatedChildDimension})", parameters);
+        tx.success();
+    }
+
+    private String str(final Dimension propagatedParentDimension) {
+        return ofNullable(propagatedParentDimension).map(Dimension::getName).orElse(null);
     }
 
 
