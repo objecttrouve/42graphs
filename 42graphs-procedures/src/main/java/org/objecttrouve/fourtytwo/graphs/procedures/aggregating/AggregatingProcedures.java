@@ -32,8 +32,6 @@ import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
 
-import java.text.MessageFormat;
-
 import static org.neo4j.procedure.Mode.WRITE;
 
 public class AggregatingProcedures {
@@ -61,9 +59,9 @@ public class AggregatingProcedures {
     public static final String procAggregateLongest = "org.objecttrouve.fourtytwo.aggregateLongest";
 
     private static final String longestXTemplate = "" +
-        "MATCH (c:{0})-->(p:{1})-->(g:{2}) " +
-        " WITH g AS grandParent, p AS parent, max(p.length_{0}) AS longest " +
-        " SET grandParent.longest_{1}_{0} = longest " +
+        "MATCH (p:%s)-->(g:%s) " +
+        " WITH g AS grandParent, max(p.length_%s) AS longest " +
+        " SET grandParent.longest_%s_%s = longest " +
         "";
 
     @Context
@@ -126,7 +124,7 @@ public class AggregatingProcedures {
             log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
             return;
         }
-        final String query = MessageFormat.format(longestXTemplate, childDimension, parentDimension, grandParentDimension);
+        final String query = String.format(longestXTemplate,  parentDimension, grandParentDimension, childDimension, parentDimension, childDimension);
         db.execute(query);
     }
 

@@ -24,6 +24,7 @@
 
 package org.objecttrouve.fourtytwo.graphs.matchers;
 
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.objecttrouve.testing.matchers.ConvenientMatchers;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.objecttrouve.fourtytwo.graphs.api.Value.idKey;
 
 class Matchers {
@@ -48,7 +50,7 @@ class Matchers {
 
     static final MatcherFactory an = ConvenientMatchers.customized()
         .withStringifiers(stringifiers)
-        //.debugging()
+        .debugging()
         .build();
 
     private static String printNodeShort(final Node n) {
@@ -58,11 +60,15 @@ class Matchers {
     }
 
     private static String printNodeDebug(final Node n) {
-        return printNodeShort(n) + "["
+
+
+        final String self = printNodeShort(n) + " ["
             + getKeys(n)
             .stream()
-            .map(k -> k +"=" + getProp(n, k)).collect(joining(","))
-            + "]";
+            .map(k -> k + "=" + getProp(n, k)).collect(joining(",")) +
+            "]";
+        final String linked = getOutgoing(n).stream().map(next -> "⤷" + next).collect(joining("\n\t"));
+        return isNotBlank(linked) ? self + "\n\t" + linked : self;
     }
 
     private static Object getProp(final Node n, final String k) {
@@ -75,5 +81,16 @@ class Matchers {
         * So, collect first.
         */
         return StreamSupport.stream(n.getPropertyKeys().spliterator(), true).collect(Collectors.toList());
+    }
+
+    private static List<String> getOutgoing(final Node n) {
+
+        return StreamSupport.stream(n.getRelationships(Direction.OUTGOING).spliterator(), true)
+            // Intentional.
+            .collect(Collectors.toList())
+            .stream()
+            .map(r -> r.getEndNode().getProperty(idKey))
+            .map(Object::toString)
+            .collect(Collectors.toList());
     }
 }

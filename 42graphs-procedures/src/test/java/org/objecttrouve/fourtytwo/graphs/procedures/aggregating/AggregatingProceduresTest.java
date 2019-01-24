@@ -26,7 +26,8 @@ package org.objecttrouve.fourtytwo.graphs.procedures.aggregating;
 
 import com.google.common.collect.Maps;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -53,21 +54,28 @@ public class AggregatingProceduresTest {
     private static final Dimension sentences = dim().withName("Sentence").mock();
     private static final Dimension documents = dim().withName("Document").mock();
 
-    @Rule
-    public Neo4jRule neo4j = new Neo4jRule()
+    @ClassRule
+    public static Neo4jRule neo4j = new Neo4jRule()
         .withProcedure(QuantityProcedures.class)
         .withProcedure(AggregatingProcedures.class);
 
-    private EmbeddedBackend graph;
-    private GraphDatabaseService db;
+    private static EmbeddedBackend graph;
+    private static GraphDatabaseService db;
 
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void setupStatic() {
         graph = new EmbeddedBackend(//
             () -> neo4j.getGraphDatabaseService(), () -> {
             throw new UnsupportedOperationException("Won't use it here. ");
         });
-        this.db = neo4j.getGraphDatabaseService();
+        db = neo4j.getGraphDatabaseService();
+    }
+
+    @Before
+    public void setupTest(){
+        final Transaction tx = db.beginTx();
+        db.execute("MATCH (n) DELETE n");
+        tx.success();
     }
 
     @Test
@@ -701,7 +709,7 @@ public class AggregatingProceduresTest {
                     .withRoot("The F... Manual")
                     .withParentDimension("Document")
                     .withChildDimension("Sentence")
-                    .withLeaves("S1")
+                    .withLeaves("S1", "S2", "S3", "S4")
             )
             .add(
                 aStringSequence()
@@ -724,9 +732,55 @@ public class AggregatingProceduresTest {
                     .withChildDimension("Token")
                     .withLeaves("User", "error", "...")
             )
+
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+
+        this.callAggregateLongest(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("The F... Manual")
+                .withPropLongest("Sentence", "Token", 5)
+        )));
+    }
+
+
+    @Test
+    public void aggregateLongest__on_node_with_multiple_children_with_multiple_grandchildren_with_distractors__01() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("The F... Manual")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1", "S2", "S3", "S4")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Saying")
+                    .withLeaves("Read", "the", "f...", "manual", "!")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S2")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Saying")
+                    .withLeaves("Don't", "make", "me", "think", "!")
+            )
             .add(
                 aStringSequence()
                     .withRoot("S3")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("User", "error", "...")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S4")
                     .withParentDimension("Sentence")
                     .withChildDimension("Token")
                     .withLeaves("500")
@@ -739,7 +793,7 @@ public class AggregatingProceduresTest {
         assertThat(db, is(aGraph().containing(
             aNode()
                 .withIdentifier("The F... Manual")
-                .withPropLongest("Sentence", "Token", 5)
+                .withPropLongest("Sentence", "Token", 3)
         )));
     }
 
