@@ -51,6 +51,7 @@ public class AggregatingProceduresTest {
     private static final boolean noInit = false;
     private static final Dimension tokens = dim().withName("Token").mock();
     private static final Dimension sentences = dim().withName("Sentence").mock();
+    private static final Dimension documents = dim().withName("Document").mock();
 
     @Rule
     public Neo4jRule neo4j = new Neo4jRule()
@@ -607,6 +608,59 @@ public class AggregatingProceduresTest {
         )));
     }
 
+    @Test
+    public void aggregateLongest__on_node_without_grandchildren() {
+
+        graph.writer(noInit) //
+            .add( //
+                aStringSequence()//
+                    .withRoot("The F... Manual") //
+                    .withParentDimension("Document") //
+                    .withChildDimension("Sentence") //
+                    .withLeaves("S1") //
+            ) //
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+
+        this.callAggregateLongest(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("The F... Manual")
+                .withPropLongest("Sentence", "Token", 0)
+        )));
+    }
+
+    @Test
+    public void aggregateLongest__on_node_with_one_grandchild() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("The F... Manual")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Read")
+            )
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+
+        this.callAggregateLongest(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("The F... Manual")
+                .withPropLongest("Sentence", "Token", 1)
+        )));
+    }
+
     private void callAggregateDirectNeighbourCount(final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
@@ -616,13 +670,23 @@ public class AggregatingProceduresTest {
         tx.success();
     }
 
-
     private void callAggregateLength(final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
         parameters.put("parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null));
         parameters.put("childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null));
         db.execute("CALL " + AggregatingProcedures.procAggregateLength + "({parentDimension}, {childDimension})", parameters);
+        tx.success();
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void callAggregateLongest(final Dimension grandParentDimension, final Dimension parentDimension, final Dimension childDimension) {
+        final Transaction tx = db.beginTx();
+        final Map<String, Object> parameters = Maps.newHashMap();
+        parameters.put("grandParentDimension", ofNullable(grandParentDimension).map(Dimension::getName).orElse(null));
+        parameters.put("parentDimension", ofNullable(parentDimension).map(Dimension::getName).orElse(null));
+        parameters.put("childDimension", ofNullable(childDimension).map(Dimension::getName).orElse(null));
+        db.execute("CALL " + AggregatingProcedures.procAggregateLongest + "({grandParentDimension}, {parentDimension}, {childDimension})", parameters);
         tx.success();
     }
 

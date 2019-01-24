@@ -62,7 +62,13 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
         return attribute("directNeighbourCount_"+dimension, node -> node.hasProperty("directNeighbourCount_"+dimension) ? (Long) node.getProperty("directNeighbourCount_"+dimension) : 0L);
     }
     private static Attribute<Node, Long> nodePropLength(final String dimension) {
-        return attribute("length_"+dimension, node -> node.hasProperty("length_"+dimension) ? (Long) node.getProperty("length_"+dimension) : 0L);
+        final String key = "length_" + dimension;
+        return attribute(key, node -> node.hasProperty(key) ? (Long) node.getProperty(key) : 0L);
+    }
+
+    private static Attribute<Node, Long> nodePropLongest(final String parentDimension, final String dimension) {
+        final String key = "longest_" + parentDimension + "_" + dimension;
+        return attribute(key, node -> node.hasProperty(key) ? (Long) node.getProperty(key) : 0L);
     }
 
     private Long matchedId = null;
@@ -201,6 +207,11 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
 
     public NeoNodeMatcher withPropLength(final String dimension, final long expected) {
         matcher.with(nodePropLength(dimension), expected);
+        return this;
+    }
+
+    public NeoNodeMatcher withPropLongest(final String parentDimension, final String dimension, final long expected) {
+        matcher.with(nodePropLongest(parentDimension, dimension), expected);
         return this;
     }
 }

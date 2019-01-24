@@ -32,14 +32,14 @@ import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
 
+import java.text.MessageFormat;
+
 import static org.neo4j.procedure.Mode.WRITE;
 
 public class AggregatingProcedures {
 
     @SuppressWarnings("WeakerAccess")
     public static final String procAggregateDirectNeighbourCounts = "org.objecttrouve.fourtytwo.aggregateDirectNeighbourCounts";
-    @SuppressWarnings("WeakerAccess")
-    public static final String procAggregateLength = "org.objecttrouve.fourtytwo.aggregateLength";
 
     private static final String neighbourCountTemplate = "" +
         "MATCH (n:%s)-[spos]->(:%s)<-[vpos]-(ne:%s) " +
@@ -48,10 +48,22 @@ public class AggregatingProcedures {
         " SET node.directNeighbourCount_%s = cf " +
         "";
 
+    @SuppressWarnings("WeakerAccess")
+    public static final String procAggregateLength = "org.objecttrouve.fourtytwo.aggregateLength";
+
     private static final String lengthTemplate = "" +
         "MATCH (c:%s)-->(p:%s) " +
         " WITH p AS parent, count(c) AS l " +
         " SET parent.length_%s = l " +
+        "";
+
+    @SuppressWarnings("WeakerAccess")
+    public static final String procAggregateLongest = "org.objecttrouve.fourtytwo.aggregateLongest";
+
+    private static final String longestXTemplate = "" +
+        "MATCH (c:{0})-->(p:{1})-->(g:{2}) " +
+        " WITH g AS grandParent, p AS parent, max(p.length_{0}) AS longest " +
+        " SET grandParent.longest_{1}_{0} = longest " +
         "";
 
     @Context
@@ -95,6 +107,26 @@ public class AggregatingProcedures {
             return;
         }
         final String query = String.format(lengthTemplate, childDimension, parentDimension, childDimension);
+        db.execute(query);
+    }
+
+    @SuppressWarnings("unused")
+    @Procedure(name = procAggregateLongest, mode = WRITE)
+    @Description("Finds and stores the longest length of a child item on the parent item.")
+    public void aggregateLongest(
+        @Name("grandParentDimension") final String grandParentDimension,
+        @Name("parentDimension") final String parentDimension,
+        @Name("childDimension") final String childDimension
+    ) {
+        if (StringUtils.isBlank(parentDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
+            return;
+        }
+        if (StringUtils.isBlank(childDimension)) {
+            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
+            return;
+        }
+        final String query = MessageFormat.format(longestXTemplate, childDimension, parentDimension, grandParentDimension);
         db.execute(query);
     }
 
