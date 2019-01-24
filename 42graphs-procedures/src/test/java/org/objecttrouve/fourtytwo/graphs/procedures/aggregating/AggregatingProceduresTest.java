@@ -850,6 +850,76 @@ public class AggregatingProceduresTest {
         )));
     }
 
+    @Test
+    public void aggregateLongest__on_node_with_multiple_children_with_multiple_grandchildren_with_distractors__03() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("The F... Manual")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1", "S2", "S4")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Saying")
+                    .withLeaves("Read", "the", "f...", "manual", "!")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S2")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Saying")
+                    .withLeaves("Don't", "make", "me", "think", "!")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S3")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("User", "error", "...")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S4")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("500")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S5")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("\uD83C\uDFC6", "\uD83C\uDFC5")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("Quickstart")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S3", "S5")
+            )
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+        this.callAggregateLength(dim().withName("Saying").mock(), tokens);
+
+        this.callAggregateLongest(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("The F... Manual")
+                .withPropLongest("Sentence", "Token", 1),
+            aNode()
+                .withIdentifier("Quickstart")
+                .withPropLongest("Sentence", "Token", 3)
+        )));
+    }
+
+
     private void callAggregateDirectNeighbourCount(final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
