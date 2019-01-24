@@ -661,6 +661,37 @@ public class AggregatingProceduresTest {
         )));
     }
 
+
+    @Test
+    public void aggregateLongest__on_node_with_a_child_with_multiple_grandchildren() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("The F... Manual")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Read", "the", "f...", "manual", "!")
+            )
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+
+        this.callAggregateLongest(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("The F... Manual")
+                .withPropLongest("Sentence", "Token", 5)
+        )));
+    }
+
     private void callAggregateDirectNeighbourCount(final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
