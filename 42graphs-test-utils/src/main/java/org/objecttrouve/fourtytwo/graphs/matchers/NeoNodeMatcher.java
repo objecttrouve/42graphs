@@ -33,10 +33,9 @@ import org.objecttrouve.fourtytwo.graphs.api.Value;
 import org.objecttrouve.testing.matchers.fluentatts.Attribute;
 import org.objecttrouve.testing.matchers.fluentatts.FluentAttributeMatcher;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
@@ -59,17 +58,30 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
     private final Attribute<Node, Iterable<Relationship>> nodeOutgoingRelationships = attribute("outgoing relationships", node -> node.getRelationships(Direction.OUTGOING));
 
     private static Attribute<Node, Long> nodePropDirectNeighbourCount(final String dimension) {
-        return attribute("directNeighbourCount_"+dimension, node -> node.hasProperty("directNeighbourCount_"+dimension) ? (Long) node.getProperty("directNeighbourCount_"+dimension) : 0L);
+        return longAttributeForKey("directNeighbourCount_"+dimension);
     }
     private static Attribute<Node, Long> nodePropLength(final String dimension) {
-        final String key = "length_" + dimension;
-        return attribute(key, node -> node.hasProperty(key) ? (Long) node.getProperty(key) : 0L);
+        return longAttributeForKey("length_" + dimension);
     }
 
     private static Attribute<Node, Long> nodePropLongest(final String parentDimension, final String dimension) {
-        final String key = "longest_" + parentDimension + "_" + dimension;
+        return longAttributeForKey("longest_" + parentDimension + "_" + dimension);
+    }
+
+    private static Attribute<Node, Long> longAttributeForKey(final String key) {
         return attribute(key, node -> node.hasProperty(key) ? (Long) node.getProperty(key) : 0L);
     }
+
+    private static Attribute<Node, List<Integer>> nodePropAggrPosCount(final String parentDimension, final String dimension) {
+        final String key = "positionCounts_" + parentDimension + "_" + dimension;
+        return attribute(key, node -> node.hasProperty(key) ? intList(key, node) :Collections.emptyList());
+
+    }
+
+    private static List<Integer> intList(final String key, final Node node) {
+        return Arrays.stream((int[]) node.getProperty(key)).boxed().collect(Collectors.toList());
+    }
+
 
     private Long matchedId = null;
     private boolean unique;
@@ -212,6 +224,11 @@ public class NeoNodeMatcher extends AbstractMatcherBuilder<Node> {
 
     public NeoNodeMatcher withPropLongest(final String parentDimension, final String dimension, final long expected) {
         matcher.with(nodePropLongest(parentDimension, dimension), expected);
+        return this;
+    }
+
+    public NeoNodeMatcher withPropAggrPositionCount(final String parentDimension, final String childDimension, final List<Integer> expected) {
+        matcher.with(nodePropAggrPosCount(parentDimension, childDimension), expected);
         return this;
     }
 }

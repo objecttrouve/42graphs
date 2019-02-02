@@ -142,12 +142,6 @@ subprojects {
         ]
     }
 
-    task testExamples(type: Test) {
-        useJUnit {
-            includeCategories 'org.objecttrouve.fourtytwo.graphs.categories.Snore'
-        }
-    }
-
     afterReleaseBuild.dependsOn uploadArchives
 
     downloadLicenses {

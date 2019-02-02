@@ -24,17 +24,24 @@
 
 package org.objecttrouve.fourtytwo.graphs.procedures.aggregating;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.collect.Maps;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.logging.Log;
+import org.neo4j.graphdb.Result;
 import org.neo4j.procedure.Context;
 import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
 import org.neo4j.procedure.Procedure;
 
+import java.util.Map;
+import java.util.Optional;
+
 import static org.neo4j.procedure.Mode.WRITE;
+import static org.objecttrouve.fourtytwo.graphs.api.Value.idKey;
 
 public class AggregatingProcedures {
+
+    @Context
+    public GraphDatabaseService db;
 
     @SuppressWarnings("WeakerAccess")
     public static final String procAggregateDirectNeighbourCounts = "org.objecttrouve.fourtytwo.aggregateDirectNeighbourCounts";
@@ -46,6 +53,17 @@ public class AggregatingProcedures {
         " SET node.directNeighbourCount_%s = cf " +
         "";
 
+    @SuppressWarnings("unused")
+    @Procedure(name = procAggregateDirectNeighbourCounts, mode = WRITE)
+    @Description("Aggregates the counts of directly preceding and following node in the childDimension")
+    public void aggregateDirectNeighbourCount(
+        @Name("parentDimension") final String parentDimension,
+        @Name("childDimension") final String childDimension
+    ) {
+        final String query = String.format(neighbourCountTemplate, childDimension, parentDimension, childDimension, childDimension);
+        db.execute(query);
+    }
+
     @SuppressWarnings("WeakerAccess")
     public static final String procAggregateLength = "org.objecttrouve.fourtytwo.aggregateLength";
 
@@ -54,6 +72,18 @@ public class AggregatingProcedures {
         " WITH p AS parent, count(c) AS l " +
         " SET parent.length_%s = l " +
         "";
+
+    @SuppressWarnings("unused")
+    @Procedure(name = procAggregateLength, mode = WRITE)
+    @Description("Aggregates the length of a parent item = the number of child items in a child dimension.")
+    public void aggregateLength(
+        @Name("parentDimension") final String parentDimension,
+        @Name("childDimension") final String childDimension
+    ) {
+        final String query = String.format(lengthTemplate, childDimension, parentDimension, childDimension);
+        db.execute(query);
+    }
+
 
     @SuppressWarnings("WeakerAccess")
     public static final String procAggregateLongest = "org.objecttrouve.fourtytwo.aggregateLongest";
@@ -64,59 +94,6 @@ public class AggregatingProcedures {
         " SET grandParent.longest_%s_%s = longest " +
         "";
 
-    @SuppressWarnings("WeakerAccess")
-    public static final String procAggregateMaxLongest = "org.objecttrouve.fourtytwo.aggregateMaxLongest";
-
-    private static final String maxLongestXTemplate = "" +
-        "MATCH (c:%s)-->(p:%s) " +
-        " WITH p AS parent, max(c.longest_%s_%s) AS longest " +
-        " SET parent.longest_%s_%s = longest " +
-        "";
-
-    @Context
-    public GraphDatabaseService db;
-    @SuppressWarnings("WeakerAccess")
-    @Context
-    public Log log;
-
-    @SuppressWarnings("unused")
-    @Procedure(name = procAggregateDirectNeighbourCounts, mode = WRITE)
-    @Description("Aggregates the counts of directly preceding and following node in the childDimension")
-    public void aggregateDirectNeighbourCount(
-        @Name("parentDimension") final String parentDimension,
-        @Name("childDimension") final String childDimension
-    ) {
-        if (StringUtils.isBlank(parentDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
-            return;
-        }
-        if (StringUtils.isBlank(childDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
-            return;
-        }
-        final String query = String.format(neighbourCountTemplate, childDimension, parentDimension, childDimension, childDimension);
-        db.execute(query);
-    }
-
-    @SuppressWarnings("unused")
-    @Procedure(name = procAggregateLength, mode = WRITE)
-    @Description("Aggregates the length of a parent item = the number of child items in a child dimension.")
-    public void aggregateLength(
-        @Name("parentDimension") final String parentDimension,
-        @Name("childDimension") final String childDimension
-    ) {
-        if (StringUtils.isBlank(parentDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
-            return;
-        }
-        if (StringUtils.isBlank(childDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
-            return;
-        }
-        final String query = String.format(lengthTemplate, childDimension, parentDimension, childDimension);
-        db.execute(query);
-    }
-
     @SuppressWarnings("unused")
     @Procedure(name = procAggregateLongest, mode = WRITE)
     @Description("Finds and stores the longest length of a child item on the parent item.")
@@ -125,17 +102,19 @@ public class AggregatingProcedures {
         @Name("parentDimension") final String parentDimension,
         @Name("childDimension") final String childDimension
     ) {
-        if (StringUtils.isBlank(parentDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
-            return;
-        }
-        if (StringUtils.isBlank(childDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
-            return;
-        }
         final String query = String.format(longestXTemplate,  parentDimension, grandParentDimension, childDimension, parentDimension, childDimension);
         db.execute(query);
     }
+
+
+    @SuppressWarnings("WeakerAccess")
+    public static final String procAggregateMaxLongest = "org.objecttrouve.fourtytwo.aggregateMaxLongest";
+
+    private static final String maxLongestXTemplate = "" +
+        "MATCH (c:%s)-->(p:%s) " +
+        " WITH p AS parent, max(c.longest_%s_%s) AS longest " +
+        " SET parent.longest_%s_%s = longest " +
+        "";
 
     @SuppressWarnings("unused")
     @Procedure(name = procAggregateMaxLongest, mode = WRITE)
@@ -146,16 +125,55 @@ public class AggregatingProcedures {
         @Name("propagatedParentDimension") final String propagatedParentDimension,
         @Name("propagatedChildDimension") final String propagatedChildDimension
     ) {
-        if (StringUtils.isBlank(parentDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
-            return;
-        }
-        if (StringUtils.isBlank(childDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't aggregate anything meaningful.", procAggregateDirectNeighbourCounts);
-            return;
-        }
         final String query = String.format(maxLongestXTemplate,  childDimension, parentDimension, propagatedParentDimension, propagatedChildDimension, propagatedParentDimension, propagatedChildDimension);
         db.execute(query);
     }
 
+
+    @SuppressWarnings("WeakerAccess")
+    public static final String procAggregatePositionCounts = "org.objecttrouve.fourtytwo.aggregatePositionCounts";
+
+    private static final String parentIdAndLengthTemplate = "" +
+        "MATCH (c:%s)-->(p:%s) " +
+        " WITH c.length_%s AS length, p."+idKey+" AS parentId " +
+        " RETURN parentId, length " +
+        "";
+    private static final String setPositionCountsTemplate = "" +
+        "MATCH (p:%s) " +
+        " WHERE p." + idKey +"= $id"+
+        " WITH p AS target " +
+        " SET target.positionCounts_%s_%s = $counts " +
+        "";
+
+
+    @SuppressWarnings("unused")
+    @Procedure(name = procAggregatePositionCounts, mode = WRITE)
+    @Description("Aggregates the counts of all positions dominated by the parent.")
+    public void aggregatePositionCounts(
+        @Name("parentDimension") final String parentDimension,
+        @Name("childDimension") final String childDimension,
+        @Name("propagatedParentDimension") final String targetDimension
+    ) {
+        final String query = String.format(parentIdAndLengthTemplate,  parentDimension, targetDimension, childDimension);
+        System.out.println("Q:" + query);
+        final String update = String.format(setPositionCountsTemplate, targetDimension, parentDimension, childDimension);
+        System.out.println("U:" + update);
+        final Result lengths = db.execute(query);
+        final Map<Object, PositionCountsFromLengths> counts = Maps.newHashMap();
+        while(lengths.hasNext()){
+            final Map<String, Object> idAndLength = lengths.next();
+            final Object id = idAndLength.get("parentId");
+            final Long length = Optional.ofNullable((Long) idAndLength.get("length")).orElse(0L);
+            final PositionCountsFromLengths positionCountsFromLengths = counts.computeIfAbsent(id, (k) -> new PositionCountsFromLengths());
+            positionCountsFromLengths.add(length.intValue());
+        }
+        counts.forEach((k,v) -> {
+            final Map<String, Object> params = Maps.newHashMap();
+            params.put("id", k);
+            final int[] value = v.get();
+            System.out.println(value.getClass().getCanonicalName());
+            params.put("counts", value);
+            db.execute(update, params);
+        });
+    }
 }

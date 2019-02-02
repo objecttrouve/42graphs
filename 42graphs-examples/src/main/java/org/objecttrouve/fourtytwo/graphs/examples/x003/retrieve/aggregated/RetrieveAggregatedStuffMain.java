@@ -24,6 +24,7 @@
 
 package org.objecttrouve.fourtytwo.graphs.examples.x003.retrieve.aggregated;
 
+import org.neo4j.graphdb.DependencyResolver;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.internal.kernel.api.exceptions.KernelException;
@@ -42,6 +43,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -69,7 +72,7 @@ public class RetrieveAggregatedStuffMain {
         log.info("Using graph database at " + store + ". Starting up DB service...");
         final GraphDatabaseService db = GraphDatabaseServiceFactory.dbService(store);
         final Procedures procedures = ((GraphDatabaseAPI) db).getDependencyResolver()
-            .resolveDependency(Procedures.class);
+            .resolveDependency(Procedures.class, DependencyResolver.SelectionStrategy.ONLY);
         procedures.registerProcedure(QuantityProcedures.class);
         procedures.registerProcedure(AggregatingProcedures.class);
         if (args.isClean()) {
@@ -78,6 +81,18 @@ public class RetrieveAggregatedStuffMain {
             db.execute("CALL org.objecttrouve.fourtytwo.aggregateDirectNeighbourCounts('Sentence','Token')");
             final Duration aggrDuration = Duration.between(startAggr, Instant.now());
             log.info("Aggregation actually had a duration of " + aggrDuration);
+
+            log.info("Aggregating sentence lengths. This may take a while...");
+            final Instant startLength = Instant.now();
+            db.execute("CALL org.objecttrouve.fourtytwo.aggregateLength('Sentence','Token')");
+            final Duration aggrLengthDuration = Duration.between(startLength, Instant.now());
+            log.info("Aggregation actually had a duration of " + aggrLengthDuration);
+
+            log.info("Aggregating position counts. This may take a while...");
+            final Instant startPosCount = Instant.now();
+            db.execute("CALL org.objecttrouve.fourtytwo.aggregatePositionCounts('Sentence','Token','Document')");
+            final Duration aggrCountPosDuration = Duration.between(startPosCount, Instant.now());
+            log.info("Aggregation actually had a duration of " + aggrCountPosDuration);
         }
         log.info("Retrieve tokens sorted by their number of neighbours. (Descending)...");
         final Result tokensWithNeighbourCounts = db.execute("MATCH (t:Token)-->(:Sentence) RETURN DISTINCT t.identifier, t.directNeighbourCount_Token ORDER BY t.directNeighbourCount_Token DESC");
@@ -91,6 +106,13 @@ public class RetrieveAggregatedStuffMain {
 
         log.info("Running sanity check...");
         assertThat(totalNeighbourCount, is(389851L));
+
+        final Result positionCountsResult = db.execute("MATCH (d:Document) RETURN d.positionCounts_Sentence_Token");
+
+        while(positionCountsResult.hasNext()){
+            final Map<String, Object> posCounts = positionCountsResult.next();
+            System.out.println("Position counts: "+Arrays.toString((int[])posCounts.get("d.positionCounts_Sentence_Token")));
+        }
 
         log.info("Shutting down...");
         db.shutdown();

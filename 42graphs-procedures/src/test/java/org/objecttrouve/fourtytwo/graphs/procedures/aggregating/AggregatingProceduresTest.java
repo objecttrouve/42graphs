@@ -36,8 +36,10 @@ import org.objecttrouve.fourtytwo.graphs.api.Dimension;
 import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
 import org.objecttrouve.fourtytwo.graphs.procedures.quantities.QuantityProcedures;
 
+import java.util.Collections;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -1081,22 +1083,186 @@ public class AggregatingProceduresTest {
         )));
     }
 
-    private void callAggregateDirectNeighbourCount(final Dimension parentDimension, final Dimension childDimension) {
+    @Test
+    public void aggregatePositionCounts__on_node_without_children() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("Doc")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves()
+            )
+            .commit();
+
+        this.callAggregatePositionCounts(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode().withIdentifier("Doc").withPropAggrPositionCount("Sentence", "Token", Collections.emptyList())
+        )));
+    }
+
+    @Test
+    public void aggregatePositionCounts__on_node_with_a_child_with_a_length() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("Doc")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Machu", "Picchu")
+            )
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+
+        this.callAggregatePositionCounts(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("Doc")
+                .withPropAggrPositionCount("Sentence", "Token", asList(1,1))
+        )));
+    }
+
+
+    @Test
+    public void aggregatePositionCounts__on_multiple_nodes_with_length() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("Doc")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1", "S2", "S3")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Machu", "Picchu")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S2")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Tiwanacu")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S3")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("San", "Pedro", "de", "Atacama")
+            )
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+
+        this.callAggregatePositionCounts(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("Doc")
+                .withPropAggrPositionCount("Sentence", "Token", asList(3,2,1,1))
+        )));
+    }
+
+
+
+    @Test
+    public void aggregatePositionCounts__on_multiple_top_nodes() {
+
+        graph.writer(noInit)
+            .add(
+                aStringSequence()
+                    .withRoot("Doc")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S1", "S2", "S3")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S1")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Machu", "Picchu")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S2")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Tiwanacu")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S3")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("San", "Pedro", "de", "Atacama")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("Doc 2")
+                    .withParentDimension("Document")
+                    .withChildDimension("Sentence")
+                    .withLeaves("S4", "S5")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S4")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Pollo", "con", "arroz")
+            )
+            .add(
+                aStringSequence()
+                    .withRoot("S5")
+                    .withParentDimension("Sentence")
+                    .withChildDimension("Token")
+                    .withLeaves("Pollo", "con", "arroz", "y", "una", "palta")
+            )
+            .commit();
+        this.callAggregateLength(sentences, tokens);
+
+        this.callAggregatePositionCounts(documents, sentences, tokens);
+
+        assertThat(db, is(aGraph().containing(
+            aNode()
+                .withIdentifier("Doc")
+                .withPropAggrPositionCount("Sentence", "Token", asList(3,2,1,1)),
+            aNode()
+                .withIdentifier("Doc 2")
+                .withPropAggrPositionCount("Sentence", "Token", asList(2,2,2,1,1,1))
+        )));
+    }
+
+    private void callAggregatePositionCounts(final Dimension targetDimension, final Dimension parentDimension, final Dimension childDimension) {
         final Transaction tx = db.beginTx();
         final Map<String, Object> parameters = Maps.newHashMap();
         parameters.put("parentDimension", str(parentDimension));
         parameters.put("childDimension", str(childDimension));
-        db.execute("CALL " + AggregatingProcedures.procAggregateDirectNeighbourCounts + "({parentDimension}, {childDimension})", parameters);
+        parameters.put("targetDimension", str(targetDimension));
+        db.execute("CALL " + AggregatingProcedures.procAggregatePositionCounts + "({parentDimension}, {childDimension}, {targetDimension})", parameters);
         tx.success();
+    }
+    private void callAggregateDirectNeighbourCount(final Dimension parentDimension, final Dimension childDimension) {
+        callAggrParentChild(AggregatingProcedures.procAggregateDirectNeighbourCounts, parentDimension, childDimension);
     }
 
     private void callAggregateLength(final Dimension parentDimension, final Dimension childDimension) {
-        final Transaction tx = db.beginTx();
-        final Map<String, Object> parameters = Maps.newHashMap();
-        parameters.put("parentDimension", str(parentDimension));
-        parameters.put("childDimension", str(childDimension));
-        db.execute("CALL " + AggregatingProcedures.procAggregateLength + "({parentDimension}, {childDimension})", parameters);
-        tx.success();
+        callAggrParentChild(AggregatingProcedures.procAggregateLength, parentDimension, childDimension);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -1127,6 +1293,15 @@ public class AggregatingProceduresTest {
 
 
         db.execute("CALL " + AggregatingProcedures.procAggregateMaxLongest + "({parentDimension}, {childDimension}, {propagatedParentDimension}, {propagatedChildDimension})", parameters);
+        tx.success();
+    }
+
+    private void callAggrParentChild(final String proc, final Dimension parentDimension, final Dimension childDimension) {
+        final Transaction tx = db.beginTx();
+        final Map<String, Object> parameters = Maps.newHashMap();
+        parameters.put("parentDimension", str(parentDimension));
+        parameters.put("childDimension", str(childDimension));
+        db.execute("CALL " + proc + "({parentDimension}, {childDimension})", parameters);
         tx.success();
     }
 

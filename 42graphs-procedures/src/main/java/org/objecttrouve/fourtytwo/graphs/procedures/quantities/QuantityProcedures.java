@@ -24,7 +24,6 @@
 
 package org.objecttrouve.fourtytwo.graphs.procedures.quantities;
 
-import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.logging.Log;
@@ -83,10 +82,6 @@ public class QuantityProcedures {
     @Procedure(name = procCountAllValues, mode = READ)
     @Description("Counts the value nodes in the given dimension.")
     public Stream<LongQuantityRecord> countAllValues(@Name("dimension") @Nonnull final String dimensionName) {
-        if (StringUtils.isBlank(dimensionName)) {
-            log.warn("Procedure '%s' called with null or empty 'dimension' parameter. Won't work.", procCountAllValues);
-            return empty();
-        }
         return execute(Query.countAllValues, dimensionName);
     }
 
@@ -97,14 +92,6 @@ public class QuantityProcedures {
         @Name("parentDimension") final String parentDimensionName,
         @Name("childDimension")final String childDimensionName
     ) {
-        if (StringUtils.isBlank(parentDimensionName)) {
-            log.warn("Procedure '%s' called with null or empty 'parentDimensionName' parameter. Won't work.", procCountAllOccurrences);
-            return empty();
-        }
-        if (StringUtils.isBlank(childDimensionName)) {
-            log.warn("Procedure '%s' called with null or empty 'childDimensionName' parameter. Won't work.", procCountAllOccurrences);
-            return empty();
-        }
         return execute(Query.countAllOccurrences, childDimensionName, parentDimensionName);
     }
 
@@ -118,18 +105,6 @@ public class QuantityProcedures {
         @Name("childDimension")final String childDimensionName
 
     ){
-        if (StringUtils.isBlank(value)) {
-            log.warn("Procedure '%s' called with null or empty 'value' parameter. Won't work.", procCountOccurrences);
-            return empty();
-        }
-        if (StringUtils.isBlank(parentDimensionName)) {
-            log.warn("Procedure '%s' called with null or empty 'parentDimensionName' parameter. Won't work.", procCountOccurrences);
-            return empty();
-        }
-        if (StringUtils.isBlank(childDimensionName)) {
-            log.warn("Procedure '%s' called with null or empty 'childDimensionName' parameter. Won't work.", procCountOccurrences);
-            return empty();
-        }
         return execute(Query.countOccurrences, childDimensionName, value, parentDimensionName);
 
     }
@@ -143,18 +118,6 @@ public class QuantityProcedures {
         @Name("childDimension") final String childDimension,
         @Name("vicinity") final long vicinity
     ) {
-        if (StringUtils.isBlank(self)) {
-            log.warn("Procedure '%s' called with null or empty 'self' parameter. Won't return anything meaningful.", procCountNeighbours);
-            return empty();
-        }
-        if (StringUtils.isBlank(parentDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't return anything meaningful.", procCountNeighbours);
-            return empty();
-        }
-        if (StringUtils.isBlank(childDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't return anything meaningful.", procCountNeighbours);
-            return empty();
-        }
         return execute(Query.countNeighbours, childDimension, self, parentDimension, childDimension, vicinity);
     }
 

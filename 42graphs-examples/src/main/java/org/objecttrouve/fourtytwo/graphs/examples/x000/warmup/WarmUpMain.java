@@ -24,13 +24,16 @@
 
 package org.objecttrouve.fourtytwo.graphs.examples.x000.warmup;
 
+import com.google.common.collect.Lists;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.objecttrouve.fourtytwo.graphs.api.Graph;
 import org.objecttrouve.fourtytwo.graphs.api.GraphWriter;
 import org.objecttrouve.fourtytwo.graphs.api.SequenceTree;
 import org.objecttrouve.fourtytwo.graphs.backend.init.EmbeddedBackend;
-import org.objecttrouve.fourtytwo.graphs.examples.common.*;
+import org.objecttrouve.fourtytwo.graphs.examples.common.SentenceDetector;
+import org.objecttrouve.fourtytwo.graphs.examples.common.StringSequenceTree;
+import org.objecttrouve.fourtytwo.graphs.examples.common.Tokenizer;
 import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.Args;
 import org.objecttrouve.fourtytwo.graphs.examples.common.cmd.CmdLine;
 import org.objecttrouve.fourtytwo.graphs.matchers.NeoDbMatcher;
@@ -40,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static java.lang.String.valueOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -92,22 +96,31 @@ public class WarmUpMain {
         final String text = file("doc/x000/Martin_Luther_Uebersetzung_1912.cleanText.txt").read();
         final String[] sentences = sentenceDetector.process(text);
         int i = 0;
+        final List<String> sentenceIds = Lists.newLinkedList();
         for (final String s : sentences) {
             final String sentence = s.replaceAll("\"", "").replaceAll("'", "");
             i++;
-            final String[] tokenize = tokenizer.process(sentence);
-            final SequenceTree sequenceTree = new StringSequenceTree(valueOf(i),
-                "Sentence", "Token", tokenize);
+            final String[] tokens = tokenizer.process(sentence);
+            final String sentenceId = valueOf(i);
+            sentenceIds.add(sentenceId);
+            final SequenceTree sequenceTree = new StringSequenceTree(sentenceId,
+                "Sentence", "Token", tokens);
             //noinspection unchecked
             graphWriter.add(sequenceTree);
         }
+        graphWriter.add(new StringSequenceTree(
+            "Bibel",
+            "Document",
+            "Sentence",
+            sentenceIds.toArray(new String[0])
+        ));
         graphWriter.commit();
 
         log.info("Doing sanity check...");
         /* The GraphWriter closes the DB, so we have to reopen it again here. */
         final GraphDatabaseService reopenedDb = dbService(store);
         /* Let's double-check that the graph has the expected number of nodes. */
-        assertThat(reopenedDb, is(NeoDbMatcher.aGraph().ofSize(813319L)));
+        assertThat(reopenedDb, is(NeoDbMatcher.aGraph().ofSize(845770L)));
 
         log.info("Shutting down...");
         reopenedDb.shutdown();

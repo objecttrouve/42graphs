@@ -32,6 +32,7 @@ import org.objecttrouve.testing.matchers.api.Stringifiers;
 import org.objecttrouve.testing.matchers.customization.MatcherFactory;
 import org.objecttrouve.testing.matchers.customization.StringifiersConfig;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -72,7 +73,13 @@ class Matchers {
     }
 
     private static Object getProp(final Node n, final String k) {
-        return n.getProperty(k, null);
+        final Object value = n.getProperty(k, null);
+        if (value != null && value.getClass().isArray()) {
+            if (value instanceof int[]){
+                return Arrays.toString((int[])value);
+            }
+        }
+        return value;
     }
 
     private static List<String> getKeys(final Node n) {

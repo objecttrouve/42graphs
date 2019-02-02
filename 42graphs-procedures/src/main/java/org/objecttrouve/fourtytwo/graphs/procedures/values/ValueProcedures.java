@@ -24,7 +24,6 @@
 
 package org.objecttrouve.fourtytwo.graphs.procedures.values;
 
-import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Result;
@@ -80,10 +79,6 @@ public class ValueProcedures {
     @Procedure(name = procRetrieveAllValues, mode = READ)
     @Description("Returns all values in the given dimension.")
     public Stream<StringValueRecord> retrieveAllValues(@Name("dimension") final String dimension) {
-        if (StringUtils.isBlank(dimension)) {
-            log.warn("Procedure '%s' called with null or empty 'dimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
-            return empty();
-        }
         return execute(Query.retrieveAllValues, dimension);
     }
 
@@ -96,18 +91,6 @@ public class ValueProcedures {
         @Name("childDimension") final String childDimension,
         @Name("vicinity") final long vicinity
     ) {
-        if (StringUtils.isBlank(self)) {
-            log.warn("Procedure '%s' called with null or empty 'self' parameter. Won't return anything meaningful.", procRetrieveAllValues);
-            return empty();
-        }
-        if (StringUtils.isBlank(parentDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'parentDimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
-            return empty();
-        }
-        if (StringUtils.isBlank(childDimension)) {
-            log.warn("Procedure '%s' called with null or empty 'childDimension' parameter. Won't return anything meaningful.", procRetrieveAllValues);
-            return empty();
-        }
         return execute(Query.retrieveNeighbours, childDimension, self, parentDimension, childDimension, vicinity);
     }
 
